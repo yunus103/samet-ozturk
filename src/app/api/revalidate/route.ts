@@ -15,13 +15,7 @@ export async function POST(request: NextRequest) {
       siteSettings: ["layout"],
       navigation: ["layout"],
       homePage: ["home"],
-      aboutPage: ["about"],
-      contactPage: ["contact"],
       blogPost: ["blog"],
-      service: ["services"],
-      project: ["projects"],
-      legalPage: ["legal"],
-      faq: ["faq"],
     };
 
     const tags = tagMap[_type] || ["all"];

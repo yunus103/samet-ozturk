@@ -1,60 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import nodemailer from "nodemailer";
 
-const schema = z.object({
-  name: z.string().min(2, "İsim en az 2 karakter olmalı"),
-  email: z.string().email("Geçerli bir e-posta girin"),
-  phone: z.string().optional(),
-  subject: z.string().optional(),
-  message: z.string().min(10, "Mesaj en az 10 karakter olmalı"),
-  honeypot: z.string().max(0),
-});
-
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const result = schema.safeParse(body);
-
-  if (!result.success) {
-    return NextResponse.json({ error: result.error.flatten().fieldErrors }, { status: 400 });
-  }
-
-  const { name, email, phone, subject, message } = result.data;
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: false,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-  });
-
   try {
-    // Siteye bildirim maili
+    const body = await request.json();
+    const { ad, email, etkinlikTuru, etkinlikTarihi, mesaj } = body;
+
+    if (!ad || !email || !mesaj) {
+      return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
     await transporter.sendMail({
-      from: `"Site İletişim Formu" <${process.env.SMTP_USER}>`,
+      from: `"Samet Öztürk Web" <${process.env.SMTP_USER}>`,
       to: process.env.CONTACT_FORM_TO,
-      subject: `Yeni Mesaj: ${subject || name}`,
+      replyTo: email,
+      subject: `Yeni İletişim Formu — ${etkinlikTuru || "Genel"} · ${ad}`,
       html: `
-        <h2>Yeni Form Mesajı</h2>
-        <p><strong>İsim:</strong> ${name}</p>
-        <p><strong>E-posta:</strong> ${email}</p>
-        ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ""}
-        ${subject ? `<p><strong>Konu:</strong> ${subject}</p>` : ""}
-        <p><strong>Mesaj:</strong></p>
-        <p>${message.replace(/\n/g, "<br/>")}</p>
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="border-bottom: 2px solid #D4A843; padding-bottom: 0.5rem; color: #111;">
+            Yeni Booking Talebi
+          </h2>
+          <table style="width:100%; border-collapse:collapse;">
+            <tr><td style="padding:8px 0; font-weight:bold; color:#555;">Ad Soyad</td><td style="padding:8px 0;">${ad}</td></tr>
+            <tr><td style="padding:8px 0; font-weight:bold; color:#555;">E-posta</td><td style="padding:8px 0;"><a href="mailto:${email}">${email}</a></td></tr>
+            ${etkinlikTuru ? `<tr><td style="padding:8px 0; font-weight:bold; color:#555;">Etkinlik Türü</td><td style="padding:8px 0;">${etkinlikTuru}</td></tr>` : ""}
+            ${etkinlikTarihi ? `<tr><td style="padding:8px 0; font-weight:bold; color:#555;">Etkinlik Tarihi</td><td style="padding:8px 0;">${etkinlikTarihi}</td></tr>` : ""}
+          </table>
+          <div style="margin-top:1.5rem; padding:1rem; background:#f9f9f9; border-left:3px solid #D4A843;">
+            <strong>Mesaj:</strong><br/>
+            <p style="margin:0.5rem 0 0;">${mesaj.replace(/\n/g, "<br/>")}</p>
+          </div>
+          <p style="margin-top:2rem; font-size:12px; color:#999;">— sametozturk.com</p>
+        </div>
       `,
     });
 
-    // Kullanıcıya otomatik yanıt maili
-    await transporter.sendMail({
-      from: `<${process.env.SMTP_USER}>`,
-      to: email,
-      subject: "Mesajınız alındı",
-      html: `<p>Sayın ${name},</p><p>Mesajınız başarıyla alındı. En kısa sürede sizinle iletişime geçeceğiz.</p>`,
-    });
-
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Mail gönderilemedi" }, { status: 500 });
+  } catch (error) {
+    console.error("Contact form error:", error);
+    return NextResponse.json({ error: "Mail gönderilemedi." }, { status: 500 });
   }
 }

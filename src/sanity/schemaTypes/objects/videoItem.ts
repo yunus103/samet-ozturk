@@ -1,0 +1,57 @@
+import { defineField, defineType } from "sanity";
+
+export const videoItemType = defineType({
+  name: "videoItem",
+  title: "Video",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Başlık",
+      type: "string",
+      description: "Video başlığı — örn: Çırağan Palace Wedding",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "youtubeId",
+      title: "YouTube Video ID",
+      type: "string",
+      description: "YouTube URL'sindeki video ID — örn: dQw4w9WgXcQ",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "category",
+      title: "Kategori",
+      type: "string",
+      options: {
+        list: [
+          { title: "Darbuka Show", value: "darbuka" },
+          { title: "Brass", value: "brass" },
+          { title: "Orient", value: "orient" },
+          { title: "Kurumsal", value: "kurumsal" },
+        ],
+        layout: "radio",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "order",
+      title: "Sıra",
+      type: "number",
+      description: "Düşük sayı önce gelir",
+      initialValue: 10,
+    }),
+  ],
+  preview: {
+    select: { title: "title", subtitle: "category" },
+    prepare({ title, subtitle }) {
+      const cat: Record<string, string> = {
+        darbuka: "Darbuka Show",
+        brass: "Brass",
+        orient: "Orient",
+        kurumsal: "Kurumsal",
+      };
+      return { title, subtitle: cat[subtitle] || subtitle };
+    },
+  },
+});

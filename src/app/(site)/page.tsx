@@ -3,15 +3,19 @@ import { draftMode } from "next/headers";
 import { getClient } from "@/sanity/lib/client";
 import { homePageQuery } from "@/sanity/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { FadeIn } from "@/components/ui/FadeIn";
-import { SanityImage } from "@/components/ui/SanityImage";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { AboutSection } from "@/components/sections/AboutSection";
+import { VideosSection } from "@/components/sections/VideosSection";
+import { GallerySection } from "@/components/sections/GallerySection";
+import { ContactSection } from "@/components/sections/ContactSection";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getClient().fetch(homePageQuery, {}, { next: { tags: ["home"] } });
   return buildMetadata({
-    title: data?.heroTitle,
+    title: data?.heroFirstName
+      ? `${data.heroFirstName} ${data.heroLastName} — Perküsyon Sanatçısı`
+      : "Samet Öztürk — Perküsyon Sanatçısı",
     canonicalPath: "/",
     pageSeo: data?.seo,
   });
@@ -27,41 +31,28 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex items-center">
-        {data?.heroImage && (
-          <div className="absolute inset-0 z-0">
-            <SanityImage
-              image={data.heroImage}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/50" />
-          </div>
-        )}
+      {/* 01 — Hero */}
+      <HeroSection data={data} />
 
-        <div className="relative z-10 container mx-auto px-4 py-24">
-          <FadeIn direction="up" duration={0.7}>
-            {data?.heroTitle && (
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 max-w-3xl">
-                {data.heroTitle}
-              </h1>
-            )}
-            {data?.heroSubtitle && (
-              <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
-                {data.heroSubtitle}
-              </p>
-            )}
-            {data?.heroCtaLabel && data?.heroCtaSlug && (
-              <Button size="lg" render={<Link href={`/${data.heroCtaSlug}`} />}>
-                {data.heroCtaLabel}
-              </Button>
-            )}
-          </FadeIn>
-        </div>
-      </section>
+      <WaveDivider />
+
+      {/* 02 — Hakkında */}
+      <AboutSection data={data} />
+
+      <WaveDivider />
+
+      {/* 03 — Showreel & Videolar */}
+      <VideosSection data={data} />
+
+      <WaveDivider />
+
+      {/* 04 — Galeri */}
+      <GallerySection data={data} />
+
+      <WaveDivider />
+
+      {/* 05 — İletişim */}
+      <ContactSection data={data} />
     </>
   );
 }
