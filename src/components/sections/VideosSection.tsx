@@ -5,7 +5,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { RiPlayCircleLine } from "react-icons/ri";
 
-type Video = { _key?: string; title: string; youtubeId: string; category: string; order?: number };
+type Video = { _key?: string; title: string; youtubeId: string; category: string };
 
 type VideosSectionProps = {
   data: {
@@ -279,9 +279,7 @@ export function VideosSection({ data }: VideosSectionProps) {
               >
                 <RiPlayCircleLine size={36} color="var(--gold)" />
               </div>
-              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
-                Ana showreel — YouTube embed · lightbox'ta açılır
-              </p>
+
             </div>
           </div>
         )}
@@ -355,6 +353,8 @@ export function VideosSection({ data }: VideosSectionProps) {
         onNext={lightboxIdx < filtered.length - 1 ? () => { const next = filtered[lightboxIdx + 1]; setLightboxId(next.youtubeId); setLightboxIdx(lightboxIdx + 1); } : undefined}
         hasPrev={lightboxIdx > 0}
         hasNext={lightboxIdx < filtered.length - 1}
+        currentIndex={lightboxId === featuredId ? 0 : lightboxIdx}
+        totalCount={lightboxId === featuredId ? 1 : filtered.length}
       />
 
       <style>{`

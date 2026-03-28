@@ -29,17 +29,11 @@ export const videoItemType = defineType({
           { title: "Brass", value: "brass" },
           { title: "Orient", value: "orient" },
           { title: "Kurumsal", value: "kurumsal" },
+          { title: "Tümü", value: "all" },
         ],
         layout: "radio",
       },
       validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "order",
-      title: "Sıra",
-      type: "number",
-      description: "Düşük sayı önce gelir",
-      initialValue: 10,
     }),
   ],
   preview: {

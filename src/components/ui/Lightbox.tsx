@@ -23,6 +23,8 @@ type LightboxProps = {
   onNext?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
+  currentIndex?: number;
+  totalCount?: number;
 };
 
 export function Lightbox({
@@ -37,6 +39,8 @@ export function Lightbox({
   onNext,
   hasPrev,
   hasNext,
+  currentIndex,
+  totalCount,
 }: LightboxProps) {
   // Scroll lock
   useEffect(() => {
@@ -97,136 +101,168 @@ export function Lightbox({
             padding: "2rem",
           }}
         >
+          {/* Desktop Counter */}
+          {totalCount !== undefined && currentIndex !== undefined && totalCount > 0 && (
+            <div
+              className="lightbox-counter-desktop"
+              style={{
+                position: "absolute",
+                top: "2.15rem",
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontFamily: "var(--font-display), serif",
+                fontSize: "14px",
+                letterSpacing: "0.15em",
+                color: "var(--text-hint)",
+                zIndex: 10,
+              }}
+            >
+              <span style={{ color: "var(--gold)" }}>{currentIndex + 1}</span> / {totalCount}
+            </div>
+          )}
+
           {/* Close */}
           <button
             onClick={(e) => { e.stopPropagation(); onClose(); }}
             aria-label="Kapat"
+            className="lightbox-close"
             style={{
               position: "absolute",
               top: "1.5rem",
               right: "1.5rem",
-              background: "none",
-              border: "1px solid rgba(255,255,255,0.15)",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: "50%",
-              width: "44px",
-              height: "44px",
+              width: "48px",
+              height: "48px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "var(--text-muted)",
               cursor: "none",
-              transition: "border-color 200ms, color 200ms",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)";
-              (e.currentTarget as HTMLElement).style.color = "var(--gold)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)";
-              (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
+              zIndex: 10,
+              transition: "all 300ms cubic-bezier(0.23, 1, 0.32, 1)",
             }}
           >
-            <RiCloseLine size={20} />
+            <RiCloseLine size={24} />
           </button>
 
-          {/* Prev */}
-          {hasPrev && onPrev && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onPrev(); }}
-              aria-label="Önceki"
-              style={{
-                position: "absolute",
-                left: "1.5rem",
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "none",
-                border: "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "50%",
-                width: "44px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--text-muted)",
-                cursor: "none",
-                transition: "border-color 200ms, color 200ms",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)";
-                (e.currentTarget as HTMLElement).style.color = "var(--gold)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
-              }}
-            >
-              <RiArrowLeftLine size={20} />
-            </button>
-          )}
+          {/* Desktop Arrows */}
+          <div className="lightbox-nav-desktop">
+            {hasPrev && onPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                aria-label="Önceki"
+                style={{
+                  position: "absolute",
+                  left: "2rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "50%",
+                  width: "56px",
+                  height: "56px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-muted)",
+                  cursor: "none",
+                  transition: "all 300ms ease",
+                }}
+              >
+                <RiArrowLeftLine size={24} />
+              </button>
+            )}
 
-          {/* Next */}
-          {hasNext && onNext && (
+            {hasNext && onNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNext(); }}
+                aria-label="Sonraki"
+                style={{
+                  position: "absolute",
+                  right: "2rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "50%",
+                  width: "56px",
+                  height: "56px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-muted)",
+                  cursor: "none",
+                  transition: "all 300ms ease",
+                }}
+              >
+                <RiArrowRightLine size={24} />
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Nav Bar */}
+          <div className="lightbox-nav-mobile">
             <button
-              onClick={(e) => { e.stopPropagation(); onNext(); }}
-              aria-label="Sonraki"
-              style={{
-                position: "absolute",
-                right: "1.5rem",
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "none",
-                border: "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "50%",
-                width: "44px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--text-muted)",
-                cursor: "none",
-                transition: "border-color 200ms, color 200ms",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)";
-                (e.currentTarget as HTMLElement).style.color = "var(--gold)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-muted)";
-              }}
+              onClick={(e) => { e.stopPropagation(); onPrev?.(); }}
+              disabled={!hasPrev}
+              style={{ opacity: hasPrev ? 1 : 0.3, background: "none", border: "none", color: "var(--gold)", padding: "0.5rem" }}
             >
-              <RiArrowRightLine size={20} />
+              <RiArrowLeftLine size={24} />
             </button>
-          )}
+            
+            {totalCount !== undefined && currentIndex !== undefined && (
+              <div style={{ 
+                fontFamily: "var(--font-display), serif", 
+                fontSize: "13px", 
+                color: "#888", 
+                whiteSpace: "nowrap",
+                flexShrink: 0
+              }}>
+                <span style={{ color: "var(--gold)" }}>{currentIndex + 1}</span> / {totalCount}
+              </div>
+            )}
+
+            <button
+              onClick={(e) => { e.stopPropagation(); onNext?.(); }}
+              disabled={!hasNext}
+              style={{ opacity: hasNext ? 1 : 0.3, background: "none", border: "none", color: "var(--gold)", padding: "0.5rem" }}
+            >
+              <RiArrowRightLine size={24} />
+            </button>
+          </div>
 
           {/* İçerik */}
           <motion.div
-            initial={{ scale: 0.92, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.92, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
             onClick={(e) => e.stopPropagation()}
             style={{
-              maxWidth: mode === "video" ? "900px" : "80vw",
+              maxWidth: mode === "video" ? "1000px" : "90vw",
               width: "100%",
               position: "relative",
+              zIndex: 5,
             }}
           >
             {mode === "photo" && src && (
-              <div style={{ position: "relative", width: "100%", maxHeight: "85vh", overflow: "hidden", borderRadius: "8px" }}>
+              <div style={{ position: "relative", width: "100%", maxHeight: "80vh", overflow: "hidden", borderRadius: "8px" }}>
                 <Image
                   src={src}
                   alt={alt || ""}
-                  width={1200}
-                  height={800}
-                  style={{ width: "100%", height: "auto", maxHeight: "85vh", objectFit: "contain" }}
+                  width={1600}
+                  height={1200}
+                  style={{ width: "100%", height: "auto", maxHeight: "80vh", objectFit: "contain" }}
                   placeholder={blurDataURL ? "blur" : "empty"}
                   blurDataURL={blurDataURL}
+                  priority
                 />
               </div>
             )}
             {mode === "video" && youtubeId && (
-              <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+              <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "8px", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }}>
                 <iframe
                   src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
                   allow="autoplay; encrypted-media"
@@ -238,12 +274,45 @@ export function Lightbox({
                     width: "100%",
                     height: "100%",
                     border: "none",
-                    borderRadius: "8px",
                   }}
                 />
               </div>
             )}
           </motion.div>
+
+          <style dangerouslySetInnerHTML={{ __html: `
+            .lightbox-nav-mobile {
+              display: none;
+              position: absolute;
+              bottom: 2rem;
+              left: 50%;
+              transform: translateX(-50%);
+              background: rgba(15, 15, 15, 0.85);
+              backdrop-filter: blur(10px);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              border-radius: 40px;
+              padding: 0.6rem 1.25rem;
+              align-items: center;
+              gap: 1.15rem;
+              flex-wrap: nowrap;
+              z-index: 20;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            }
+            @media (max-width: 768px) {
+              .lightbox-nav-desktop, .lightbox-counter-desktop {
+                display: none !important;
+              }
+              .lightbox-nav-mobile {
+                display: flex;
+              }
+              .lightbox-close {
+                top: 1rem !important;
+                right: 1rem !important;
+                width: 40px !important;
+                height: 40px !important;
+              }
+            }
+          `}} />
         </motion.div>
       )}
     </AnimatePresence>,

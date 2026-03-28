@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
@@ -78,6 +78,21 @@ const NameReveal = ({ text, delay }: { text: string; delay: number }) => {
 
 export function HeroSection({ data }: HeroSectionProps) {
   const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Tarayıcı önbelleğinden gelirse canPlay tetiklenmeyebilir
+    if (videoRef.current) {
+      if (videoRef.current.readyState >= 2) {
+        setVideoReady(true);
+      }
+      
+      // Otomatik oynatmayı garantiye alalım (Tarayıcı politikaları için muted zaten var)
+      videoRef.current.play().catch(err => {
+        console.log("Video autoplay prevented:", err);
+      });
+    }
+  }, [data?.heroVideoUrl]);
 
   const firstName = data?.heroFirstName || "SAMET";
   const lastName = data?.heroLastName || "ÖZTÜRK";
@@ -115,6 +130,7 @@ export function HeroSection({ data }: HeroSectionProps) {
             zIndex: 0,
             transition: videoReady ? "opacity 600ms ease" : "none",
             opacity: videoReady ? 0 : 1,
+            transform: "scaleX(-1)",
           }}
         >
           <SanityImage
@@ -135,11 +151,13 @@ export function HeroSection({ data }: HeroSectionProps) {
       {/* Katman 2: Video (harici MP4 — yüklendikten sonra görünür) */}
       {data?.heroVideoUrl && (
         <video
+          ref={videoRef}
+          key={data.heroVideoUrl}
           autoPlay
           muted
           loop
           playsInline
-          preload="none"
+          preload="auto"
           src={data.heroVideoUrl}
           onCanPlay={() => setVideoReady(true)}
           style={{
@@ -150,7 +168,8 @@ export function HeroSection({ data }: HeroSectionProps) {
             objectFit: "cover",
             zIndex: 1,
             opacity: videoReady ? 1 : 0,
-            transition: "opacity 600ms ease",
+            transition: "opacity 1200ms ease",
+            transform: "scaleX(-1)",
           }}
         />
       )}

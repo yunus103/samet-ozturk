@@ -191,7 +191,7 @@ export const homePageType = defineType({
       title: "Video Listesi",
       type: "array",
       group: "videos",
-      description: "Sıra alanına göre sıralanır. Kategori filtresinde kullanılır.",
+      description: "Array içindeki sıralama (yukarı/aşağı kaydırarak) sitedeki sırayı belirler. Kategori filtresinde kullanılır.",
       of: [{ type: "videoItem" }],
     }),
 
@@ -217,7 +217,7 @@ export const homePageType = defineType({
       title: "Galeri Fotoğrafları",
       type: "array",
       group: "gallery",
-      description: "Sıra alanına göre sıralanır. İlk 9 görünür, 'Tümünü Göster' ile açılır.",
+      description: "Array içindeki sıralama (yukarı/aşağı kaydırarak) sitedeki sırayı belirler. İlk 9 görünür, 'Tümünü Göster' ile açılır.",
       of: [{ type: "galleryImage" }],
     }),
 

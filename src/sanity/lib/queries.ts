@@ -45,13 +45,13 @@ export const homePageQuery = groq`*[_type == "homePage"][0] {
   videoSectionTitle,
   featuredVideoId,
   featuredVideoLabel,
-  videos[] | order(order asc) { _key, title, youtubeId, category, order },
+  videos[] { _key, title, youtubeId, category },
 
   // Galeri
   gallerySectionLabel,
   gallerySectionTitle,
-  galleryImages[] | order(order asc) {
-    _key, order,
+  galleryImages[] {
+    _key,
     image { asset->{ _id, url, metadata { lqip, dimensions } }, alt, hotspot, crop }
   },
 

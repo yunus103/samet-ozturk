@@ -21,13 +21,6 @@ export const galleryImageType = defineType({
       ],
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: "order",
-      title: "Sıra",
-      type: "number",
-      description: "Düşük sayı önce gelir",
-      initialValue: 10,
-    }),
   ],
   preview: {
     select: { title: "image.alt", media: "image" },

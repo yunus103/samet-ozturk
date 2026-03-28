@@ -8,7 +8,6 @@ import { urlForImage, getImageLqip } from "@/sanity/lib/image";
 
 type GalleryImage = {
   _key?: string;
-  order?: number;
   image?: {
     asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } };
     alt?: string;
@@ -26,6 +25,27 @@ type GallerySectionProps = {
 };
 
 const INITIAL_COUNT = 9;
+const COLUMN_COUNT = 3;
+
+/**
+ * Öğeleri sabit bir şekilde sütunlara dağıtır.
+ * Index 0,1,2 → sırasıyla col0, col1, col2
+ * Index 3,4,5 → col0, col1, col2 ... (round-robin)
+ * Bu sayede sıralama asla değişmez.
+ */
+function distributeToColumns(
+  items: Array<{ item: GalleryImage; originalIdx: number }>,
+  colCount: number
+): Array<Array<{ item: GalleryImage; originalIdx: number }>> {
+  const cols: Array<Array<{ item: GalleryImage; originalIdx: number }>> = Array.from(
+    { length: colCount },
+    () => []
+  );
+  items.forEach((entry, i) => {
+    cols[i % colCount].push(entry);
+  });
+  return cols;
+}
 
 function GalleryItem({
   item,
@@ -38,7 +58,6 @@ function GalleryItem({
   if (!item.image?.asset) return null;
 
   const imageUrl = urlForImage(item.image as any)?.auto("format").width(800).url();
-  const blur = getImageLqip(item.image as any);
 
   return (
     <div
@@ -46,16 +65,15 @@ function GalleryItem({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        breakInside: "avoid",
         marginBottom: "12px",
         position: "relative",
         overflow: "hidden",
         borderRadius: "4px",
         cursor: "none",
         border: `1px solid ${hovered ? "var(--gold-border)" : "transparent"}`,
-        transform: hovered ? "scale(1.03)" : "scale(1)",
-        transition: "transform 300ms ease, border-color 300ms ease",
-        boxShadow: hovered ? "0 0 20px rgba(212,168,67,0.1)" : "none",
+        transform: hovered ? "scale(1.02)" : "scale(1)",
+        transition: "transform 400ms cubic-bezier(0.16, 1, 0.3, 1), border-color 300ms ease, box-shadow 300ms ease",
+        boxShadow: hovered ? "0 20px 40px rgba(0,0,0,0.35)" : "none",
       }}
     >
       {imageUrl && (
@@ -68,20 +86,23 @@ function GalleryItem({
             width: "100%",
             height: "auto",
             display: "block",
-            filter: hovered ? "brightness(1.1) contrast(1.02)" : "brightness(0.85)",
-            transition: "filter 300ms ease",
+            filter: hovered
+              ? "brightness(1.1) contrast(1.05)"
+              : "brightness(0.82) grayscale(0.15)",
+            transition: "filter 500ms ease",
           }}
         />
       )}
-      {/* Grain overlay (hover'da kalkıyor) */}
+      {/* Grain overlay */}
       <div
         aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
-          opacity: hovered ? 0 : 0.4,
+          opacity: hovered ? 0 : 0.35,
           transition: "opacity 300ms ease",
-          background: "repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 4px)",
+          background:
+            "repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 4px)",
           pointerEvents: "none",
         }}
       />
@@ -96,16 +117,26 @@ export function GallerySection({ data }: GallerySectionProps) {
   const sectionLabel = data?.gallerySectionLabel || "GALERİ";
   const sectionTitle = data?.gallerySectionTitle || "Sahneden Kareler";
   const allImages: GalleryImage[] = data?.galleryImages || [];
-  const displayImages = expanded ? allImages : allImages.slice(0, INITIAL_COUNT);
   const totalCount = allImages.length;
 
-  const openLightbox = (idx: number) => setLightboxIdx(idx);
+  // Tüm öğeleri orijinal index ile etiketle — bu hiç değişmez
+  const indexedImages = allImages.map((item, idx) => ({ item, originalIdx: idx }));
 
-  const currentImage = lightboxIdx >= 0 ? displayImages[lightboxIdx] : null;
+  // Görünür öğeleri belirle
+  const visibleImages = expanded ? indexedImages : indexedImages.slice(0, INITIAL_COUNT);
+
+  // Sütunlara dağıt — deterministik round-robin
+  const columns = distributeToColumns(visibleImages, COLUMN_COUNT);
+
+  const openLightbox = (originalIdx: number) => setLightboxIdx(originalIdx);
+
+  const currentImage = lightboxIdx >= 0 ? allImages[lightboxIdx] : null;
   const lightboxSrc = currentImage?.image?.asset
     ? urlForImage(currentImage.image as any)?.auto("format").width(1600).url() || undefined
     : undefined;
-  const lightboxBlur = currentImage?.image ? getImageLqip(currentImage.image as any) : undefined;
+  const lightboxBlur = currentImage?.image
+    ? getImageLqip(currentImage.image as any)
+    : undefined;
 
   return (
     <section
@@ -152,7 +183,7 @@ export function GallerySection({ data }: GallerySectionProps) {
                   fontWeight: 400,
                 }}
               >
-                {displayImages.length} / {totalCount}
+                {totalCount}
               </div>
               <div
                 style={{
@@ -169,22 +200,88 @@ export function GallerySection({ data }: GallerySectionProps) {
           )}
         </div>
 
-        {/* Masonry Grid */}
-        {displayImages.length > 0 ? (
-          <div
-            style={{
-              columns: "3",
-              columnGap: "12px",
-            }}
-            className="masonry-grid"
-          >
-            {displayImages.map((item, idx) => (
-              <GalleryItem
-                key={item._key || idx}
-                item={item}
-                onClick={() => openLightbox(idx)}
-              />
-            ))}
+        {/* Masonry Grid — JS Column Distribution */}
+        {allImages.length > 0 ? (
+          <div style={{ position: "relative" }}>
+            {/* Sütun wrapper */}
+            <div
+              className="masonry-columns"
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${COLUMN_COUNT}, 1fr)`,
+                gap: "12px",
+                alignItems: "start",
+              }}
+            >
+              {columns.map((col, colIdx) => (
+                <div key={colIdx} style={{ display: "flex", flexDirection: "column" }}>
+                  {col.map(({ item, originalIdx }) => (
+                    <GalleryItem
+                      key={item._key || originalIdx}
+                      item={item}
+                      onClick={() => openLightbox(originalIdx)}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Gradient Overlay & Reveal Button */}
+            {!expanded && totalCount > INITIAL_COUNT && (
+              <div
+                style={{
+                  marginTop: "2.5rem",
+                  display: "flex",
+                  justifyContent: "center",
+                  position: "relative",
+                }}
+              >
+                {/* Gradient çizgisi */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    top: "-120px",
+                    left: 0,
+                    right: 0,
+                    height: "120px",
+                    background:
+                      "linear-gradient(to top, var(--bg-section) 0%, transparent 100%)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <MagneticButton
+                  onClick={() => setExpanded(true)}
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    letterSpacing: "0.25em",
+                    textTransform: "uppercase",
+                    color: "var(--gold)",
+                    border: "1px solid var(--gold-border)",
+                    padding: "1.2rem 3rem",
+                    backgroundColor: "transparent",
+                    transition: "all 300ms ease",
+                    position: "relative",
+                    zIndex: 2,
+                  }}
+                  aria-label={`Tümünü Göster (${totalCount})`}
+                  onMouseEnter={(e: any) => {
+                    e.currentTarget.style.backgroundColor = "var(--gold)";
+                    e.currentTarget.style.color = "#080808";
+                    e.currentTarget.style.borderColor = "var(--gold)";
+                  }}
+                  onMouseLeave={(e: any) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = "var(--gold)";
+                    e.currentTarget.style.borderColor = "var(--gold-border)";
+                  }}
+                >
+                  GALERİYİ KEŞFET ({totalCount - INITIAL_COUNT} daha)
+                </MagneticButton>
+              </div>
+            )}
           </div>
         ) : (
           <div
@@ -199,44 +296,6 @@ export function GallerySection({ data }: GallerySectionProps) {
             Sanity Studio'dan galeri fotoğrafı ekleyin.
           </div>
         )}
-
-        {/* Tümünü Göster Butonu */}
-        {!expanded && totalCount > INITIAL_COUNT && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "3rem",
-            }}
-          >
-            <MagneticButton
-              onClick={() => setExpanded(true)}
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "10px",
-                fontWeight: 500,
-                letterSpacing: "0.25em",
-                textTransform: "uppercase",
-                color: "var(--gold)",
-                border: "1px solid var(--gold-border)",
-                padding: "1rem 2.5rem",
-                backgroundColor: "transparent",
-                transition: "background-color 300ms, color 300ms",
-              }}
-              aria-label={`Tümünü Göster (${totalCount})`}
-              onMouseEnter={(e: any) => {
-                e.currentTarget.style.backgroundColor = "var(--gold)";
-                e.currentTarget.style.color = "#080808";
-              }}
-              onMouseLeave={(e: any) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = "var(--gold)";
-              }}
-            >
-              TÜMÜNÜ GÖSTER ({totalCount})
-            </MagneticButton>
-          </div>
-        )}
       </div>
 
       {/* Lightbox */}
@@ -248,17 +307,23 @@ export function GallerySection({ data }: GallerySectionProps) {
         alt={currentImage?.image?.alt || ""}
         blurDataURL={lightboxBlur || undefined}
         onPrev={lightboxIdx > 0 ? () => setLightboxIdx(lightboxIdx - 1) : undefined}
-        onNext={lightboxIdx < displayImages.length - 1 ? () => setLightboxIdx(lightboxIdx + 1) : undefined}
+        onNext={
+          lightboxIdx < allImages.length - 1
+            ? () => setLightboxIdx(lightboxIdx + 1)
+            : undefined
+        }
         hasPrev={lightboxIdx > 0}
-        hasNext={lightboxIdx < displayImages.length - 1}
+        hasNext={lightboxIdx < allImages.length - 1}
+        currentIndex={lightboxIdx}
+        totalCount={allImages.length}
       />
 
       <style>{`
-        @media (max-width: 768px) {
-          .masonry-grid { columns: 1 !important; }
+        @media (max-width: 640px) {
+          .masonry-columns { grid-template-columns: 1fr !important; }
         }
-        @media (max-width: 1024px) {
-          .masonry-grid { columns: 2 !important; }
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .masonry-columns { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
     </section>
