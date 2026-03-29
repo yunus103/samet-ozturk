@@ -34,6 +34,7 @@
   /* Font */
   --font-display: var(--font-cinzel);
   --font-body:    var(--font-dm-sans);
+  --font-signature: var(--font-sacramento);
 
   /* Tailwind shadcn uyumu — koyu tema sabit */
   --background:        #080808;
@@ -77,6 +78,7 @@
   --color-destructive:         var(--destructive);
   --font-sans:                 var(--font-dm-sans), system-ui, sans-serif;
   --font-display:              var(--font-cinzel), serif;
+  --font-signature:            var(--font-sacramento), cursive;
   --radius-sm:                 calc(var(--radius) * 0.6);
   --radius-md:                 calc(var(--radius) * 0.8);
   --radius-lg:                 var(--radius);
@@ -170,6 +172,9 @@
   }
   .font-body {
     font-family: var(--font-body), system-ui, sans-serif;
+  }
+  .font-signature {
+    font-family: var(--font-sacramento), cursive;
   }
   .text-gold {
     color: var(--gold);

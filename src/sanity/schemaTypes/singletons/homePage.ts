@@ -254,6 +254,14 @@ export const homePageType = defineType({
       placeholder: "samet@example.com",
     }),
     defineField({
+      name: "contactPhone",
+      title: "Telefon Numarası",
+      type: "string",
+      group: "contact",
+      description: "Arama uygulamasına yönlendiren telefon numarası. Örn: +905551234567",
+      placeholder: "+905551234567",
+    }),
+    defineField({
       name: "contactInstagram",
       title: "Instagram Handle",
       type: "string",
@@ -281,6 +289,14 @@ export const homePageType = defineType({
       type: "url",
       group: "contact",
       placeholder: "https://facebook.com/sametozturk",
+    }),
+    defineField({
+      name: "contactBgVideoUrl",
+      title: "İletişim Arka Plan Video URL",
+      type: "string",
+      group: "contact",
+      description: "Arka planda sessiz oynayacak video. Harici CDN MP4 linki girin — örn: https://res.cloudinary.com/.../video.mp4",
+      placeholder: "https://res.cloudinary.com/...",
     }),
 
     // ── SEO ───────────────────────────────────────────────────────────────

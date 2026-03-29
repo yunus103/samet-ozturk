@@ -15,6 +15,7 @@ type LightboxProps = {
   // Photo mode
   src?: string;
   alt?: string;
+  caption?: string;
   blurDataURL?: string;
   // Video mode
   youtubeId?: string;
@@ -33,6 +34,7 @@ export function Lightbox({
   mode,
   src,
   alt,
+  caption,
   blurDataURL,
   youtubeId,
   onPrev,
@@ -259,6 +261,35 @@ export function Lightbox({
                   blurDataURL={blurDataURL}
                   priority
                 />
+                
+                {caption && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
+                      padding: "2rem 1.5rem 1rem",
+                      textAlign: "center"
+                    }}
+                  >
+                    <p style={{
+                      fontFamily: "var(--font-body), sans-serif",
+                      fontSize: "clamp(12px, 2vw, 14px)",
+                      color: "var(--gold)",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      margin: 0,
+                      textShadow: "0 2px 4px rgba(0,0,0,0.5)"
+                    }}>
+                      {caption}
+                    </p>
+                  </motion.div>
+                )}
               </div>
             )}
             {mode === "video" && youtubeId && (

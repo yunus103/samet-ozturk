@@ -44,7 +44,7 @@ export function SanityImage({
   // Sanity hotspot değerleri 0-1 arasındadır, bu yüzden yüzdesiyle çarpıyoruz.
   const objectPosition = image.hotspot
     ? `${image.hotspot.x * 100}% ${image.hotspot.y * 100}%`
-    : "center";
+    : className?.includes("object-") ? undefined : "center";
 
   if (!imageUrl) return null;
 

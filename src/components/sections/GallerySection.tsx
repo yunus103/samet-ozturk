@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Lightbox } from "@/components/ui/Lightbox";
@@ -8,6 +8,7 @@ import { urlForImage, getImageLqip } from "@/sanity/lib/image";
 
 type GalleryImage = {
   _key?: string;
+  caption?: string;
   image?: {
     asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } };
     alt?: string;
@@ -113,20 +114,34 @@ function GalleryItem({
 export function GallerySection({ data }: GallerySectionProps) {
   const [expanded, setExpanded] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(-1);
+  const [colCount, setColCount] = useState(COLUMN_COUNT);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const updateColumns = () => {
+      if (window.innerWidth <= 640) {
+        setColCount(2); // Mobile
+      } else if (window.innerWidth <= 1024) {
+        setColCount(2); // Tablet
+      } else {
+        setColCount(3); // Desktop
+      }
+    };
+
+    updateColumns();
+    setIsMounted(true);
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
 
   const sectionLabel = data?.gallerySectionLabel || "GALERİ";
   const sectionTitle = data?.gallerySectionTitle || "Sahneden Kareler";
   const allImages: GalleryImage[] = data?.galleryImages || [];
   const totalCount = allImages.length;
 
-  // Tüm öğeleri orijinal index ile etiketle — bu hiç değişmez
   const indexedImages = allImages.map((item, idx) => ({ item, originalIdx: idx }));
-
-  // Görünür öğeleri belirle
   const visibleImages = expanded ? indexedImages : indexedImages.slice(0, INITIAL_COUNT);
-
-  // Sütunlara dağıt — deterministik round-robin
-  const columns = distributeToColumns(visibleImages, COLUMN_COUNT);
+  const columns = distributeToColumns(visibleImages, colCount);
 
   const openLightbox = (originalIdx: number) => setLightboxIdx(originalIdx);
 
@@ -208,9 +223,13 @@ export function GallerySection({ data }: GallerySectionProps) {
               className="masonry-columns"
               style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(${COLUMN_COUNT}, 1fr)`,
+                gridTemplateColumns: `repeat(${colCount}, 1fr)`,
                 gap: "12px",
                 alignItems: "start",
+                opacity: isMounted ? 1 : 0,
+                filter: isMounted ? "blur(0px)" : "blur(8px)",
+                transform: isMounted ? "translateY(0)" : "translateY(20px)",
+                transition: "opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), filter 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
               {columns.map((col, colIdx) => (
@@ -305,6 +324,7 @@ export function GallerySection({ data }: GallerySectionProps) {
         mode="photo"
         src={lightboxSrc}
         alt={currentImage?.image?.alt || ""}
+        caption={currentImage?.caption}
         blurDataURL={lightboxBlur || undefined}
         onPrev={lightboxIdx > 0 ? () => setLightboxIdx(lightboxIdx - 1) : undefined}
         onNext={
@@ -320,10 +340,10 @@ export function GallerySection({ data }: GallerySectionProps) {
 
       <style>{`
         @media (max-width: 640px) {
-          .masonry-columns { grid-template-columns: 1fr !important; }
+          .masonry-columns { grid-template-columns: repeat(${colCount}, 1fr) !important; }
         }
         @media (min-width: 641px) and (max-width: 1024px) {
-          .masonry-columns { grid-template-columns: repeat(2, 1fr) !important; }
+          .masonry-columns { grid-template-columns: repeat(${colCount}, 1fr) !important; }
         }
       `}</style>
     </section>

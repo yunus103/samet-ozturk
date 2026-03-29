@@ -52,6 +52,7 @@ export const homePageQuery = groq`*[_type == "homePage"][0] {
   gallerySectionTitle,
   galleryImages[] {
     _key,
+    caption,
     image { asset->{ _id, url, metadata { lqip, dimensions } }, alt, hotspot, crop }
   },
 
@@ -60,10 +61,12 @@ export const homePageQuery = groq`*[_type == "homePage"][0] {
   contactSectionTitle,
   contactSectionSubtitle,
   contactEmail,
+  contactPhone,
   contactInstagram,
   contactInstagramUrl,
   contactYoutubeUrl,
   contactFacebookUrl,
+  contactBgVideoUrl,
 
   // SEO
   seo

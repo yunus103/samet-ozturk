@@ -47,7 +47,7 @@ const SoundWaveBars = () => (
   </div>
 );
 
-const NameReveal = ({ text, delay }: { text: string; delay: number }) => {
+const NameReveal = ({ text, delay, style }: { text: string; delay: number, style?: React.CSSProperties }) => {
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -56,18 +56,14 @@ const NameReveal = ({ text, delay }: { text: string; delay: number }) => {
   }, [delay]);
 
   return (
-    <div style={{ overflow: "hidden" }}>
+    <div style={{ overflow: "hidden", padding: "0.5rem 0" }}>
       <div
         style={{
-          fontFamily: "var(--font-display), serif",
-          fontSize: "clamp(3.5rem, 10vw, 8rem)",
-          fontWeight: 400,
           color: "var(--text-heading)",
-          letterSpacing: "0.08em",
-          lineHeight: 1,
-          textTransform: "uppercase",
+          fontWeight: 400,
           transform: revealed ? "translateY(0)" : "translateY(110%)",
           transition: "transform 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+          ...style
         }}
       >
         {text}
@@ -94,8 +90,8 @@ export function HeroSection({ data }: HeroSectionProps) {
     }
   }, [data?.heroVideoUrl]);
 
-  const firstName = data?.heroFirstName || "SAMET";
-  const lastName = data?.heroLastName || "ÖZTÜRK";
+  const firstName = data?.heroFirstName || "Samet";
+  const lastName = data?.heroLastName || "Öztürk";
   const eyebrow = data?.heroEyebrow || "PERKÜSYON ŞOV SANATÇISI";
   const tagline = data?.heroTagline || "DARBUKA · BRASS · SAHNE PERFORMANSI";
   const ctaLabel = data?.heroCtaLabel || "SAHNEYE DAVET ET";
@@ -137,7 +133,7 @@ export function HeroSection({ data }: HeroSectionProps) {
             image={data.heroVideoPoster as any}
             fill
             sizes="100vw"
-            className="object-cover"
+            className="object-cover object-left md:object-center"
             priority
           />
         </div>
@@ -160,12 +156,12 @@ export function HeroSection({ data }: HeroSectionProps) {
           preload="auto"
           src={data.heroVideoUrl}
           onCanPlay={() => setVideoReady(true)}
+          className="object-cover object-left md:object-center"
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
             zIndex: 1,
             opacity: videoReady ? 1 : 0,
             transition: "opacity 1200ms ease",
@@ -231,9 +227,30 @@ export function HeroSection({ data }: HeroSectionProps) {
         </div>
 
         {/* İsim — Clip-Path Reveal */}
-        <div style={{ marginBottom: "1.5rem", lineHeight: 1 }}>
-          <NameReveal text={firstName} delay={400} />
-          <NameReveal text={lastName} delay={600} />
+        <div style={{ marginBottom: "1.5rem", marginTop: "-3rem" }}>
+          <NameReveal 
+            text={firstName} 
+            delay={400} 
+            style={{
+              fontFamily: "var(--font-signature), cursive",
+              fontSize: "clamp(3.5rem, 11vw, 8rem)",
+              textTransform: "none",
+              letterSpacing: "0.02em",
+              lineHeight: 1.3
+            }}
+          />
+          <NameReveal 
+            text={lastName} 
+            delay={600} 
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontSize: "clamp(3rem, 9.5vw, 6.5rem)",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              lineHeight: 1.3,
+              marginTop: "-1rem"
+            }}
+          />
         </div>
 
         {/* Tagline */}

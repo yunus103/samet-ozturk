@@ -17,12 +17,11 @@ type VideosSectionProps = {
   };
 };
 
-const CATEGORIES = ["TÜMÜ", "DARBUKA SHOW", "BRASS", "ORIENT", "KURUMSAL"];
+const CATEGORIES = ["TÜMÜ", "DARBUKA SHOW", "BRASS SENSETION", "ORIENT SENSETION"];
 const CAT_MAP: Record<string, string> = {
   darbuka: "DARBUKA SHOW",
-  brass: "BRASS",
-  orient: "ORIENT",
-  kurumsal: "KURUMSAL",
+  brass: "BRASS SENSETION",
+  orient: "ORIENT SENSETION",
 };
 
 function VideoCard({

@@ -26,9 +26,8 @@ export const videoItemType = defineType({
       options: {
         list: [
           { title: "Darbuka Show", value: "darbuka" },
-          { title: "Brass", value: "brass" },
-          { title: "Orient", value: "orient" },
-          { title: "Kurumsal", value: "kurumsal" },
+          { title: "Brass Sensetion", value: "brass" },
+          { title: "Orient Sensetion", value: "orient" },
           { title: "Tümü", value: "all" },
         ],
         layout: "radio",
@@ -41,9 +40,8 @@ export const videoItemType = defineType({
     prepare({ title, subtitle }) {
       const cat: Record<string, string> = {
         darbuka: "Darbuka Show",
-        brass: "Brass",
-        orient: "Orient",
-        kurumsal: "Kurumsal",
+        brass: "Brass Sensetion",
+        orient: "Orient Sensetion",
       };
       return { title, subtitle: cat[subtitle] || subtitle };
     },
