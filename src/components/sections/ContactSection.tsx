@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { FaInstagram, FaYoutube, FaFacebookF, FaPhoneAlt } from "react-icons/fa";
+import { FaInstagram, FaYoutube, FaFacebookF } from "react-icons/fa";
 
 type ContactSectionProps = {
   data: {
@@ -35,14 +35,6 @@ export function ContactSection({ data }: ContactSectionProps) {
     { href: data?.contactInstagramUrl || "#", Icon: FaInstagram, label: "INSTAGRAM" },
   ].filter(s => s.href !== "#");
 
-  if (data?.contactPhone) {
-    socialLinks.unshift({
-      href: `tel:${data.contactPhone.replace(/\\s+/g, "")}`,
-      Icon: FaPhoneAlt,
-      label: "PHONE"
-    });
-  }
-
   const emailText = data?.contactEmail || "INFO@SMTOZTRK.COM";
   const phoneText = data?.contactPhone;
   const customMessage = "BERABER SINIRSIZ EĞLENMEK DİLEĞİYLE !";
@@ -57,7 +49,7 @@ export function ContactSection({ data }: ContactSectionProps) {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-        backgroundColor: "#000",
+        backgroundColor: "#f5f5f5", // Light base for transition
       }}
     >
       <style>{`
@@ -70,47 +62,50 @@ export function ContactSection({ data }: ContactSectionProps) {
         }
 
         .contact-title-text {
-          font-family: var(--font-rubik-dirt), var(--font-creepster), cursive;
-          font-size: clamp(2.5rem, 8vw, 6rem);
-          color: #ffffff;
-          line-height: 1;
-          margin: 0 0 4rem 0; /* Changed from 0 to add 4rem bottom margin */
-          letter-spacing: 0.02em;
+          font-family: var(--font-kalam), cursive;
+          font-weight: 700;
+          font-size: clamp(3rem, 12vw, 8rem);
+          color: #000000;
+          line-height: 0.9;
+          margin: 0 0 4rem 0;
+          letter-spacing: -0.02em;
+          text-transform: lowercase;
+          text-shadow: 2px 2px 5px rgba(0,0,0,0.15); /* Hafif derinlik */
         }
 
         .contact-info-container {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0.25rem;
-          margin-bottom: 4rem;
+          gap: 0.75rem;
+          margin-bottom: 5rem;
         }
 
         .contact-email-link {
           font-family: var(--font-dm-sans), sans-serif;
-          font-weight: 800;
-          font-size: clamp(16px, 3vw, 24px);
-          color: #ffffff;
+          font-weight: 900;
+          font-size: clamp(20px, 4.5vw, 32px);
+          color: #000000;
           text-decoration: none;
-          letter-spacing: 0.05em;
-          /* Resimdeki glitch benzeri efekt (mavi/kırmızı-turuncu gölgeler) */
-          text-shadow: 2px 0px 0px #00e5ff;
-          transition: filter 200ms, transform 200ms;
+          letter-spacing: 0.04em;
+          text-shadow: 2px 4px 10px rgba(0,0,0,0.4), 0px 2px 4px rgba(0,0,0,0.2), 0px 0px 20px rgba(255,255,255,0.5); /* Strong shadow like the image */
+          transition: transform 200ms, text-shadow 200ms;
         }
 
         .contact-email-link:hover {
-          filter: brightness(1.2);
           transform: scale(1.02);
+          text-shadow: 2px 6px 15px rgba(0,0,0,0.5), 0px 3px 6px rgba(0,0,0,0.3), 0px 0px 25px rgba(255,255,255,0.6);
         }
 
         .contact-message-text {
-          font-family: var(--font-new-rocker), var(--font-creepster), cursive;
-          font-size: clamp(14px, 2.5vw, 20px);
-          color: #ffffff;
+          font-family: var(--font-dm-sans), sans-serif;
+          font-weight: 900;
+          font-size: clamp(16px, 3vw, 22px);
+          color: #000000;
           letter-spacing: 0.05em;
           margin: 0;
-          /* Resimdeki turuncu/kahverengi arka plan/stroke efekti */
-          text-shadow: 2px 2px 0px #cc6600, -1px -1px 0px #cc6600, 1px -1px 0px #cc6600, -1px 1px 0px #cc6600;
+          text-transform: uppercase;
+          text-shadow: 2px 4px 10px rgba(0,0,0,0.4), 0px 2px 4px rgba(0,0,0,0.2), 0px 0px 20px rgba(255,255,255,0.5);
         }
 
         .social-icons-container {
@@ -121,7 +116,7 @@ export function ContactSection({ data }: ContactSectionProps) {
 
         .social-icon-wrapper {
           color: #ffffff;
-          /* İkonlara 3D blok derinliği efekti (Resimdeki gri gölge) */
+          /* İkonlara eski 3D blok derinliği efekti (Gri/Beyaz gölge) */
           filter: drop-shadow(4px 4px 0px #a3a3a3) drop-shadow(1px 1px 0px #a3a3a3);
           transition: transform 200ms;
         }
@@ -130,6 +125,7 @@ export function ContactSection({ data }: ContactSectionProps) {
           transform: translate(-2px, -2px);
           filter: drop-shadow(6px 6px 0px #a3a3a3) drop-shadow(2px 2px 0px #a3a3a3);
         }
+
         .contact-bg-video {
           object-position: center;
         }
@@ -142,10 +138,10 @@ export function ContactSection({ data }: ContactSectionProps) {
             align-items: center;
           }
           .contact-gradient {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, transparent 100%) !important;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, transparent 100%) !important;
           }
           .contact-bg-video {
-            object-position: 90% center; /* Mobilde videonun sağ tarafındaki içeriğe odaklanmak için */
+            object-position: 85% center; /* Mobilde videonun asil icerigi sagda diye sag tarafa odakla */
           }
         }
       `}</style>
@@ -169,12 +165,11 @@ export function ContactSection({ data }: ContactSectionProps) {
             objectFit: "cover",
             zIndex: 0,
             pointerEvents: "none",
-            opacity: 0.8,
           }}
         />
       )}
 
-      {/* Dark Overlay for content readability */}
+      {/* Light Overlay for content readability if video is too bright/dark */}
       <div 
         style={{
           position: "absolute",
@@ -182,7 +177,7 @@ export function ContactSection({ data }: ContactSectionProps) {
           left: 0,
           width: "100%",
           height: "100%",
-          background: "linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          background: "rgba(255,255,255,0.05)", // Minimal overlay
           zIndex: 1,
           pointerEvents: "none",
         }}
@@ -205,7 +200,14 @@ export function ContactSection({ data }: ContactSectionProps) {
           <a href={`mailto:${emailText.toLowerCase()}`} className="contact-email-link">
             {emailText.toUpperCase()}
           </a>
-          <p className="contact-message-text" style={{ marginTop: "0.5rem" }}>
+          
+          {phoneText && (
+            <a href={`tel:${phoneText.replace(/\s+/g, "")}`} className="contact-email-link">
+              {phoneText}
+            </a>
+          )}
+
+          <p className="contact-message-text" style={{ marginTop: "1.5rem" }}>
             {customMessage}
           </p>
         </div>
@@ -220,7 +222,7 @@ export function ContactSection({ data }: ContactSectionProps) {
               aria-label={label}
               className="social-icon-wrapper"
             >
-              <Icon size={label === "PHONE" ? 34 : 40} />
+              <Icon size={44} />
             </a>
           ))}
         </div>

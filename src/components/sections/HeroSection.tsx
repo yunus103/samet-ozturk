@@ -56,18 +56,17 @@ const NameReveal = ({ text, delay, style }: { text: string; delay: number, style
   }, [delay]);
 
   return (
-    <div style={{ overflow: "hidden", padding: "0.5rem 0" }}>
-      <div
-        style={{
-          color: "var(--text-heading)",
-          fontWeight: 400,
-          transform: revealed ? "translateY(0)" : "translateY(110%)",
-          transition: "transform 900ms cubic-bezier(0.16, 1, 0.3, 1)",
-          ...style
-        }}
-      >
-        {text}
-      </div>
+    <div
+      style={{
+        color: "var(--text-heading)",
+        fontWeight: 400,
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+        ...style
+      }}
+    >
+      {text}
     </div>
   );
 };
@@ -90,7 +89,7 @@ export function HeroSection({ data }: HeroSectionProps) {
     }
   }, [data?.heroVideoUrl]);
 
-  const firstName = data?.heroFirstName || "Samet";
+  const firstName = (data?.heroFirstName || "Samet").toUpperCase();
   const lastName = data?.heroLastName || "Öztürk";
   const eyebrow = data?.heroEyebrow || "PERKÜSYON ŞOV SANATÇISI";
   const tagline = data?.heroTagline || "DARBUKA · BRASS · SAHNE PERFORMANSI";
@@ -226,29 +225,33 @@ export function HeroSection({ data }: HeroSectionProps) {
           {eyebrow}
         </div>
 
-        {/* İsim — Clip-Path Reveal */}
-        <div style={{ marginBottom: "1.5rem", marginTop: "-3rem" }}>
+        {/* İsim */}
+        <div style={{ marginBottom: "1.5rem", marginTop: "-3rem", lineHeight: 1 }}>
           <NameReveal 
             text={firstName} 
             delay={400} 
             style={{
-              fontFamily: "var(--font-signature), cursive",
-              fontSize: "clamp(3.5rem, 11vw, 8rem)",
-              textTransform: "none",
-              letterSpacing: "0.02em",
-              lineHeight: 1.3
+              fontFamily: "var(--font-display), serif",
+              fontSize: "clamp(2.8rem, 11vw, 8rem)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              lineHeight: 1,
+              fontWeight: 700,
+              display: "block",
             }}
           />
           <NameReveal 
             text={lastName} 
             delay={600} 
             style={{
-              fontFamily: "var(--font-display), serif",
-              fontSize: "clamp(3rem, 9.5vw, 6.5rem)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
+              fontFamily: "var(--font-signature), cursive",
+              fontSize: "clamp(2.8rem, 11vw, 7.5rem)",
+              textTransform: "none",
+              letterSpacing: "0.02em",
               lineHeight: 1.3,
-              marginTop: "-1rem"
+              display: "block",
+              fontWeight: 400,
+              paddingBottom: "0.5rem",
             }}
           />
         </div>

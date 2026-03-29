@@ -5,7 +5,7 @@ export const layoutQuery = groq`{
   "settings": *[_type == "siteSettings"][0] {
     siteName, siteTagline,
     logo { asset->{ _id, url, metadata { lqip, dimensions } }, hotspot, crop },
-    contactInfo { phone, email, address },
+    contactInfo { phone, email, address, whatsappNumber },
     socialLinks[] { platform, url },
     gaId, gtmId
   },

@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { ScrollProgressBar } from "@/components/layout/ScrollProgressBar";
+import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { JsonLd, organizationJsonLd } from "@/components/seo/JsonLd";
 import { draftMode } from "next/headers";
 import Link from "next/link";
@@ -55,6 +56,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
       {/* Sayfa İçeriği */}
       <main>{children}</main>
+
+      {/* WhatsApp Butonu */}
+      <WhatsAppButton phoneNumber={layout?.settings?.contactInfo?.whatsappNumber || layout?.settings?.contactInfo?.phone} />
 
       {/* Footer */}
       <SiteFooter settings={layout?.settings} pageData={pageData} />

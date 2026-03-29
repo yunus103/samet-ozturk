@@ -1,45 +1,31 @@
 import type { Metadata } from "next";
-import { Cinzel, DM_Sans, Sacramento, Creepster, New_Rocker, Rubik_Dirt } from "next/font/google";
+import { Cinzel, DM_Sans, Kalam, Alex_Brush } from "next/font/google";
 import "./globals.css";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
   variable: "--font-cinzel",
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "700", "800"],
   display: "swap",
 });
 
-const sacramento = Sacramento({
+const kalamFont = Kalam({
   subsets: ["latin"],
-  variable: "--font-sacramento",
-  weight: "400",
+  variable: "--font-kalam",
+  weight: ["300", "400", "700"],
   display: "swap",
 });
 
-const creepster = Creepster({
+const alexBrush = Alex_Brush({
   subsets: ["latin"],
-  variable: "--font-creepster",
-  weight: "400",
-  display: "swap",
-});
-
-const newRocker = New_Rocker({
-  subsets: ["latin"],
-  variable: "--font-new-rocker",
-  weight: "400",
-  display: "swap",
-});
-
-const rubikDirt = Rubik_Dirt({
-  subsets: ["latin"],
-  variable: "--font-rubik-dirt",
+  variable: "--font-alex-brush",
   weight: "400",
   display: "swap",
 });
@@ -50,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${cinzel.variable} ${dmSans.variable} ${sacramento.variable} ${creepster.variable} ${newRocker.variable} ${rubikDirt.variable}`}>
+    <html lang="tr" className={`${cinzel.variable} ${dmSans.variable} ${kalamFont.variable} ${alexBrush.variable}`}>
       <body style={{ backgroundColor: "#080808" }}>{children}</body>
     </html>
   );
