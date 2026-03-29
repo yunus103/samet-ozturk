@@ -14,6 +14,9 @@ export function CustomCursor() {
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
+    // TypeScript için null olmadığı kesinleşmiş referanslar
+    const dotEl: HTMLDivElement = dot;
+    const ringEl: HTMLDivElement = ring;
 
     // ── Pointer coarse (touch) kontrolü ──────────────────────────────────
     const coarseQuery = window.matchMedia("(pointer: coarse)");
@@ -39,8 +42,8 @@ export function CustomCursor() {
 
     const hideCursor = () => {
       document.documentElement.classList.remove("has-custom-cursor");
-      dot.style.opacity = "0";
-      ring.style.opacity = "0";
+      dotEl.style.opacity = "0";
+      ringEl.style.opacity = "0";
       cancelAnimationFrame(rafId);
     };
 
@@ -49,8 +52,8 @@ export function CustomCursor() {
         document.head.appendChild(styleEl);
       }
       document.documentElement.classList.add("has-custom-cursor");
-      dot.style.display = "";
-      ring.style.display = "";
+      dotEl.style.display = "";
+      ringEl.style.display = "";
       rafId = requestAnimationFrame(loop);
     };
 
@@ -82,8 +85,8 @@ export function CustomCursor() {
       // Scale lerp — RAF içinde, CSS transition yok → tam kontrol
       currentScale += (targetScale - currentScale) * 0.10;
 
-      ring.style.transform = `translate(${ringX - RING_BASE / 2}px, ${ringY - RING_BASE / 2}px) scale(${currentScale.toFixed(4)})`;
-      ring.style.backgroundColor = hovered ? "rgba(212,168,67,0.15)" : "transparent";
+      ringEl.style.transform = `translate(${ringX - RING_BASE / 2}px, ${ringY - RING_BASE / 2}px) scale(${currentScale.toFixed(4)})`;
+      ringEl.style.backgroundColor = hovered ? "rgba(212,168,67,0.15)" : "transparent";
 
       rafId = requestAnimationFrame(loop);
     }
@@ -92,15 +95,15 @@ export function CustomCursor() {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      dot.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+      dotEl.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
 
       if (!visible) {
         visible = true;
         ringX = mouseX;
         ringY = mouseY;
         currentScale = SCALE_NORMAL;
-        dot.style.opacity = "1";
-        ring.style.opacity = "1";
+        dotEl.style.opacity = "1";
+        ringEl.style.opacity = "1";
       }
 
       const interactive = (e.target as Element)?.closest(
@@ -111,8 +114,8 @@ export function CustomCursor() {
     };
 
     const onMouseLeave = () => {
-      dot.style.opacity = "0";
-      ring.style.opacity = "0";
+      dotEl.style.opacity = "0";
+      ringEl.style.opacity = "0";
       visible = false;
     };
 
@@ -121,10 +124,10 @@ export function CustomCursor() {
       mouseY = e.clientY;
       ringX = mouseX;
       ringY = mouseY;
-      dot.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+      dotEl.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
       visible = true;
-      dot.style.opacity = "1";
-      ring.style.opacity = "1";
+      dotEl.style.opacity = "1";
+      ringEl.style.opacity = "1";
     };
 
     const onPointerChange = (e: MediaQueryListEvent) => {
