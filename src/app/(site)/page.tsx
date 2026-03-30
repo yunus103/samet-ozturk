@@ -9,8 +9,11 @@ import { GallerySection } from "@/components/sections/GallerySection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 
+// On-demand revalidation only — webhook triggers revalidateTag("home")
+export const revalidate = false;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await getClient().fetch(homePageQuery, {}, { next: { tags: ["home"] } });
+  const data = await getClient().fetch(homePageQuery, {}, { cache: "force-cache", next: { tags: ["home"] } });
   return buildMetadata({
     title: data?.heroFirstName
       ? `${data.heroFirstName} ${data.heroLastName} — Perküsyon Sanatçısı`
@@ -24,7 +27,7 @@ export default async function HomePage() {
   const data = await getClient().fetch(
     homePageQuery,
     {},
-    { next: { tags: ["home"] } }
+    { cache: "force-cache", next: { tags: ["home"] } }
   );
 
   return (

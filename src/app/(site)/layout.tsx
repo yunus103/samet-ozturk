@@ -10,8 +10,8 @@ import { JsonLd, organizationJsonLd } from "@/components/seo/JsonLd";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [layout, pageData] = await Promise.all([
-    getClient().fetch(layoutQuery, {}, { next: { tags: ["layout"] } }),
-    getClient().fetch(homePageQuery, {}, { next: { tags: ["home"] } }),
+    getClient().fetch(layoutQuery, {}, { cache: "force-cache", next: { tags: ["layout"] } }),
+    getClient().fetch(homePageQuery, {}, { cache: "force-cache", next: { tags: ["home"] } }),
   ]);
 
   return (
