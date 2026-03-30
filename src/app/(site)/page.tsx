@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { draftMode } from "next/headers";
 import { getClient } from "@/sanity/lib/client";
 import { homePageQuery } from "@/sanity/lib/queries";
 import { buildMetadata } from "@/lib/seo";
@@ -22,8 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const isDraft = (await draftMode()).isEnabled;
-  const data = await getClient(isDraft).fetch(
+  const data = await getClient().fetch(
     homePageQuery,
     {},
     { next: { tags: ["home"] } }
