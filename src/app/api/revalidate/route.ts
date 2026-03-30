@@ -11,43 +11,43 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    // Sanity webhooks can send _type at root or inside document property
-    const _type = body._type || body.document?._type;
+    // Sanity webhooks can send _type at root OR inside document property
+    const _type: string | undefined = body._type || body.document?._type;
 
     if (!_type) {
-      return NextResponse.json({ error: "No document type found" }, { status: 400 });
+      return NextResponse.json({ error: "No document type found in payload" }, { status: 400 });
     }
 
     const tagMap: Record<string, string[]> = {
-      siteSettings: ["layout"],
-      navigation: ["layout"],
-      homePage: ["home"],
-      blogPost: ["blog"],
+      siteSettings: ["layout", "home"],
+      navigation:   ["layout"],
+      homePage:     ["home"],
+      blogPost:     ["blog"],
     };
 
-    const tags = tagMap[_type] || [_type, "all"];
+    const tags = tagMap[_type] ?? [_type, "all"];
 
-    // Correctly call revalidateTag (it takes only one argument)
+    // Next.js 16.x revalidateTag requires 2 arguments: (tag, type)
     tags.forEach((tag) => {
-      revalidateTag(tag);
-      console.log(`Revalidated tag: ${tag}`);
+      revalidateTag(tag, "page");
+      console.log(`[revalidate] tag="${tag}" type="page"`);
     });
 
-    // Nuclear option for critical site-wide changes
+    // For layout-level data (navbar, footer, site settings) also revalidate the entire layout
     if (_type === "siteSettings" || _type === "navigation") {
       revalidatePath("/", "layout");
-      console.log("Revalidated path: / (layout)");
+      console.log("[revalidate] revalidatePath /  layout");
     }
 
-    return NextResponse.json({ 
-      revalidated: true, 
-      type: _type, 
-      tags, 
-      now: Date.now() 
+    return NextResponse.json({
+      revalidated: true,
+      type: _type,
+      tags,
+      now: Date.now(),
     });
-  } catch (err: any) {
-    console.error("Revalidation error:", err.message);
-    return NextResponse.json({ error: "Invalid body or revalidation failed" }, { status: 400 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[revalidate] Error:", message);
+    return NextResponse.json({ error: "Revalidation failed", detail: message }, { status: 400 });
   }
 }
-
