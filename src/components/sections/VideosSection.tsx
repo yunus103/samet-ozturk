@@ -4,6 +4,7 @@ import { useState, MouseEvent } from "react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { RiPlayCircleLine } from "react-icons/ri";
+import Image from "next/image";
 
 type Video = { _key?: string; title: string; youtubeId: string; category: string };
 
@@ -76,14 +77,12 @@ function VideoCard({
 
       {/* Thumbnail */}
       <div style={{ position: "relative", paddingBottom: "56.25%", backgroundColor: "#0a0a0a" }}>
-        <img
+        <Image
           src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
           alt={video.title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
             objectFit: "cover",
             opacity: hovered ? 0.7 : 0.5,
             transition: "opacity 300ms ease",
@@ -230,14 +229,13 @@ export function VideosSection({ data }: VideosSectionProps) {
               border: "1px solid var(--border-default)",
             }}
           >
-            <img
+            <Image
               src={`https://img.youtube.com/vi/${featuredId}/maxresdefault.jpg`}
               alt="Showreel"
+              fill
+              priority
+              sizes="(max-width: 1200px) 100vw, 1200px"
               style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
                 objectFit: "cover",
                 opacity: 0.5,
               }}

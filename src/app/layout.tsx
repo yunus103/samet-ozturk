@@ -5,21 +5,21 @@ import "./globals.css";
 const cinzel = Cinzel({
   subsets: ["latin"],
   variable: "--font-cinzel",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
-  weight: ["300", "400", "500", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const kalamFont = Kalam({
   subsets: ["latin"],
   variable: "--font-kalam",
-  weight: ["300", "400", "700"],
+  weight: ["700"],
   display: "swap",
 });
 
