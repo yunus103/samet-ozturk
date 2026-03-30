@@ -162,6 +162,8 @@ export function VideosSection({ data }: VideosSectionProps) {
   const [activeCategory, setActiveCategory] = useState("TÜMÜ");
   const [lightboxId, setLightboxId] = useState<string | null>(null);
   const [lightboxIdx, setLightboxIdx] = useState(0);
+  const INITIAL_LIMIT = 6;
+  const [visibleCount, setVisibleCount] = useState(INITIAL_LIMIT);
 
   const sectionLabel = data?.videoSectionLabel || "SHOWREEL & VİDEOLAR";
   const sectionTitle = data?.videoSectionTitle || "Sahne Anları";
@@ -178,6 +180,13 @@ export function VideosSection({ data }: VideosSectionProps) {
     setLightboxIdx(idx);
     setLightboxId(id);
   };
+
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setVisibleCount(INITIAL_LIMIT);
+  };
+
+  const displayedVideos = filtered.slice(0, visibleCount);
 
   return (
     <section
@@ -289,7 +298,7 @@ export function VideosSection({ data }: VideosSectionProps) {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 style={{
                   fontFamily: "var(--font-body)",
                   fontSize: "10px",
@@ -313,18 +322,54 @@ export function VideosSection({ data }: VideosSectionProps) {
 
         {/* Video Grid */}
         {filtered.length > 0 ? (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "1rem",
-            }}
-            className="video-grid"
-          >
-            {filtered.map((video) => (
-              <VideoCard key={video._key || video.youtubeId} video={video} onPlay={openVideo} />
-            ))}
-          </div>
+          <>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "1rem",
+              }}
+              className="video-grid"
+            >
+              {displayedVideos.map((video) => (
+                <VideoCard key={video._key || video.youtubeId} video={video} onPlay={openVideo} />
+              ))}
+            </div>
+
+            {filtered.length > visibleCount && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "3rem" }}>
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    padding: "1rem 2.5rem",
+                    backgroundColor: "transparent",
+                    color: "var(--gold)",
+                    border: "1px solid var(--gold-border)",
+                    borderRadius: "4px",
+                    cursor: "none",
+                    transition: "all 300ms ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--gold)";
+                    e.currentTarget.style.color = "var(--bg-main)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(212,168,67,0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = "var(--gold)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  DAHA FAZLA VİDEO GÖR
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div
             style={{

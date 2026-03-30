@@ -55,9 +55,20 @@ export async function buildMetadata(params: BuildMetadataParams = {}): Promise<M
     ? urlForImage(ogImageSource)?.width(1200).height(630).url()
     : undefined;
 
+  const faviconUrl = defaults?.favicon
+    ? urlForImage(defaults.favicon)?.width(32).height(32).url()
+    : "/favicon.ico";
+
   return {
     title,
     description,
+    icons: {
+      icon: faviconUrl,
+      shortcut: faviconUrl,
+      apple: defaults?.favicon
+        ? urlForImage(defaults.favicon)?.width(180).height(180).url()
+        : "/favicon.ico",
+    },
     robots: noIndex ? "noindex, nofollow" : "index, follow",
     ...(canonicalUrl && { alternates: { canonical: canonicalUrl } }),
     openGraph: {

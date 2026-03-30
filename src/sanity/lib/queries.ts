@@ -101,5 +101,6 @@ export const defaultSeoQuery = groq`*[_type == "siteSettings"][0] {
   "title": defaultSeo.metaTitle,
   "description": defaultSeo.metaDescription,
   "ogImage": defaultOgImage,
+  favicon,
   siteName
 }`;
