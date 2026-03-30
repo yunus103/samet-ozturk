@@ -23,18 +23,18 @@ type BuildMetadataParams = {
 export async function buildMetadata(params: BuildMetadataParams = {}): Promise<Metadata> {
   const defaults = await client.fetch(defaultSeoQuery, {}, { next: { tags: ["layout"] } });
 
-  const siteName = defaults?.siteName || "Site Adı";
-  const defaultSlogan = defaults?.title || defaults?.siteName || ""; // Default SEO Meta Title alanı
+  const fallbackTitle = "Samet Öztürk | Darbuka Show";
+  const siteName = defaults?.siteName || fallbackTitle;
   const isHomePage = params.canonicalPath === "/";
 
   let title = "";
   if (isHomePage) {
     // Ana Sayfa Önceliği: 
-    // 1. Ana Sayfa Dokümanı Sayfa SEO Başlığı
+    // 1. Ana Sayfa Dokümanı Sayfa SEO Başlığı (params.pageSeo?.metaTitle)
     // 2. Fonksiyona gönderilen özel başlık (params.title)
-    // 3. Site Ayarları -> Varsayılan SEO -> Meta Başlık (Slogan)
-    const slogan = params.pageSeo?.metaTitle || params.title || defaultSlogan;
-    title = slogan && slogan !== siteName ? `${siteName} | ${slogan}` : siteName;
+    // 3. Site Ayarları -> Site Adı (siteName)
+    const customTitle = params.pageSeo?.metaTitle || params.title;
+    title = customTitle && customTitle !== siteName ? `${siteName} | ${customTitle}` : siteName;
   } else {
     // Diğer Sayfalar Önceliği: 
     // 1. Sayfanın kendi SEO Başlığı

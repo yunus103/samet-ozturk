@@ -12,7 +12,15 @@ const navLinks = [
   { label: "İLETİŞİM", href: "#iletisim" },
 ];
 
-export function Navbar({ siteName }: { siteName?: string }) {
+export function Navbar({ 
+  siteName, 
+  logoTextFallback, 
+  logoUrl 
+}: { 
+  siteName?: string; 
+  logoTextFallback?: string;
+  logoUrl?: string;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -35,6 +43,8 @@ export function Navbar({ siteName }: { siteName?: string }) {
       if (el) el.scrollIntoView({ behavior: "smooth" });
     }, 300);
   };
+
+  const displayLogoText = logoTextFallback || siteName || "SAMET ÖZTÜRK | DARBUKA SHOW";
 
   return (
     <>
@@ -62,16 +72,29 @@ export function Navbar({ siteName }: { siteName?: string }) {
           href="/"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           style={{
-            fontFamily: "var(--font-display), serif",
-            fontSize: "clamp(14px, 2vw, 18px)",
-            fontWeight: 400,
-            color: "var(--gold)",
-            letterSpacing: "0.18em",
+            display: "flex",
+            alignItems: "center",
             textDecoration: "none",
-            textTransform: "uppercase",
           }}
         >
-          {siteName || "SAMET ÖZTÜRK"}
+          {logoUrl ? (
+            <img 
+              src={logoUrl} 
+              alt={displayLogoText} 
+              style={{ maxHeight: "40px", objectFit: "contain" }} 
+            />
+          ) : (
+            <span style={{
+              fontFamily: "var(--font-display), serif",
+              fontSize: "clamp(14px, 2vw, 18px)",
+              fontWeight: 400,
+              color: "var(--gold)",
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+            }}>
+              {displayLogoText}
+            </span>
+          )}
         </Link>
 
         {/* Desktop Nav */}

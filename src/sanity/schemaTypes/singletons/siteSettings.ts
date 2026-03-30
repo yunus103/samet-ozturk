@@ -23,6 +23,12 @@ export const siteSettingsType = defineType({
       ],
     }),
     defineField({
+      name: "logoTextFallback",
+      title: "Logo Yazı Fallback",
+      type: "string",
+      description: "Logo girilmezse navbar'da bu isim yazar. Boş bırakılırsa 'Site Adı' görünür. Hiçbiri yoksa 'Samet Öztürk | Darbuka Show' yazar.",
+    }),
+    defineField({
       name: "logoDark",
       title: "Logo (Koyu Tema)",
       type: "image",

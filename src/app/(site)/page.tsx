@@ -15,9 +15,6 @@ export const revalidate = false;
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getClient().fetch(homePageQuery, {}, { cache: "force-cache", next: { tags: ["home"] } });
   return buildMetadata({
-    title: data?.heroFirstName
-      ? `${data.heroFirstName} ${data.heroLastName} — Perküsyon Sanatçısı`
-      : "Samet Öztürk — Perküsyon Sanatçısı",
     canonicalPath: "/",
     pageSeo: data?.seo,
   });

@@ -25,7 +25,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <JsonLd data={organizationJsonLd(layout?.settings)} />
 
       {/* Navbar */}
-      <Navbar siteName={layout?.settings?.siteName} />
+      <Navbar 
+        siteName={layout?.settings?.siteName} 
+        logoTextFallback={layout?.settings?.logoTextFallback} 
+        logoUrl={layout?.settings?.logo?.asset?.url}
+      />
 
       {/* Sayfa İçeriği */}
       <main>{children}</main>
