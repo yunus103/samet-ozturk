@@ -1,23 +1,45 @@
+import { NextResponse } from "next/server";
 import { revalidateTag, revalidatePath } from "next/cache";
-import { type NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+// Sanity webhook payload from standard setup
+export async function POST(req: Request) {
   try {
-    const secret = request.headers.get("x-webhook-secret");
-
-    if (secret !== process.env.SANITY_WEBHOOK_SECRET) {
-      console.error("Sanity Webhook: Unauthorized (Secret mismatch)");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const signature = req.headers.get("sanity-webhook-signature");
+    if (!signature) {
+      return NextResponse.json(
+        { message: "No signature provided" },
+        { status: 401 }
+      );
     }
 
-    const body = await request.json();
-    // Sanity webhooks can send _type at root OR inside document property
-    const _type: string | undefined = body._type || body.document?._type;
+    const { isValidSignature, SIGNATURE_HEADER_NAME } = await import("@sanity/webhook");
+    const secret = process.env.SANITY_WEBHOOK_SECRET;
 
-    if (!_type) {
-      return NextResponse.json({ error: "No document type found in payload" }, { status: 400 });
+    if (!secret) {
+      console.error("SANITY_WEBHOOK_SECRET is not set in environment variables");
+      return NextResponse.json(
+        { message: "Server misconfiguration: missing secret" },
+        { status: 500 }
+      );
     }
 
+    const body = await req.text();
+
+    // Verify signature using Sanity's official package
+    if (!isValidSignature(body, signature, secret)) {
+      return NextResponse.json(
+        { message: "Invalid signature" },
+        { status: 401 }
+      );
+    }
+
+    const payload = JSON.parse(body);
+    const _type = payload._type || payload.document?._type;
+    const slug = payload.slug || payload.document?.slug;
+
+    console.log(`[Sanity Webhook] Revalidating type: ${_type}`);
+
+    // Revalidate based on tags mapped from _type
     const tagMap: Record<string, string[]> = {
       siteSettings: ["layout", "home"],
       navigation:   ["layout"],
@@ -27,27 +49,33 @@ export async function POST(request: NextRequest) {
 
     const tags = tagMap[_type] ?? [_type, "all"];
 
-    // Next.js 16.x revalidateTag requires 2 arguments: (tag, type)
     tags.forEach((tag) => {
-      revalidateTag(tag, "page");
-      console.log(`[revalidate] tag="${tag}" type="page"`);
+      // Revalidate target tags using the user's exact parameters that worked previously
+      // @ts-ignore
+      revalidateTag(tag, { expire: 0 });
+      console.log(`Revalidated tag: ${tag}`);
     });
 
-    // For layout-level data (navbar, footer, site settings) also revalidate the entire layout
-    if (_type === "siteSettings" || _type === "navigation") {
-      revalidatePath("/", "layout");
-      console.log("[revalidate] revalidatePath /  layout");
+    // For specific document updates based on slug
+    if (_type && slug?.current) {
+      const itemTag = `${_type}:${slug.current}`;
+      // @ts-ignore
+      revalidateTag(itemTag, { expire: 0 });
+      console.log(`Revalidated tag: ${itemTag}`);
     }
 
-    return NextResponse.json({
-      revalidated: true,
-      type: _type,
-      tags,
-      now: Date.now(),
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[revalidate] Error:", message);
-    return NextResponse.json({ error: "Revalidation failed", detail: message }, { status: 400 });
+    // For layout-level data (navbar, footer, site settings) also revalidate the entire layout path
+    if (_type === "siteSettings" || _type === "navigation") {
+      revalidatePath("/", "layout");
+      console.log("Revalidated path: / (layout)");
+    }
+
+    return NextResponse.json({ revalidated: true, now: Date.now() });
+  } catch (err: any) {
+    console.error("Revalidation error:", err.message);
+    return NextResponse.json(
+      { message: "Error revalidating", error: err.message },
+      { status: 500 }
+    );
   }
 }
