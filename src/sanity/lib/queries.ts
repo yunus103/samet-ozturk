@@ -19,6 +19,7 @@ export const layoutQuery = groq`{
 export const homePageQuery = groq`*[_type == "homePage"][0] {
   // Hero
   heroEyebrow,
+  heroLogo { asset->{ _id, url, metadata { lqip, dimensions } }, alt, hotspot, crop },
   heroFirstName,
   heroLastName,
   heroTagline,

@@ -7,6 +7,12 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 type HeroSectionProps = {
   data: {
     heroEyebrow?: string;
+    heroLogo?: {
+      asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } };
+      alt?: string;
+      hotspot?: { x: number; y: number };
+      crop?: { top: number; bottom: number; left: number; right: number };
+    };
     heroFirstName?: string;
     heroLastName?: string;
     heroTagline?: string;
@@ -47,7 +53,7 @@ const SoundWaveBars = () => (
   </div>
 );
 
-const NameReveal = ({ text, delay, style }: { text: string; delay: number, style?: React.CSSProperties }) => {
+const ContentReveal = ({ children, delay, style }: { children: React.ReactNode; delay: number, style?: React.CSSProperties }) => {
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -66,7 +72,7 @@ const NameReveal = ({ text, delay, style }: { text: string; delay: number, style
         ...style
       }}
     >
-      {text}
+      {children}
     </div>
   );
 };
@@ -225,35 +231,60 @@ export function HeroSection({ data }: HeroSectionProps) {
           {eyebrow}
         </div>
 
-        {/* İsim */}
+        {/* İsim / Logo */}
         <div style={{ marginBottom: "1.5rem", marginTop: "-3rem", lineHeight: 1 }}>
-          <NameReveal 
-            text={firstName} 
-            delay={400} 
-            style={{
-              fontFamily: "var(--font-display), serif",
-              fontSize: "clamp(2.8rem, 11vw, 8rem)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              lineHeight: 1,
-              fontWeight: 700,
-              display: "block",
-            }}
-          />
-          <NameReveal 
-            text={lastName} 
-            delay={600} 
-            style={{
-              fontFamily: "var(--font-signature), cursive",
-              fontSize: "clamp(2.8rem, 11vw, 7.5rem)",
-              textTransform: "none",
-              letterSpacing: "0.02em",
-              lineHeight: 1.3,
-              display: "block",
-              fontWeight: 400,
-              paddingBottom: "0.5rem",
-            }}
-          />
+          {data?.heroLogo?.asset ? (
+            <ContentReveal delay={400} style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start" }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: "clamp(180px, 32vw, 420px)", // Mobilde büyütüldü (125px -> 180px), Desktop'ta hafif büyütüldü (375px -> 420px)
+                  aspectRatio: data.heroLogo.asset.metadata?.dimensions
+                    ? `${data.heroLogo.asset.metadata.dimensions.width} / ${data.heroLogo.asset.metadata.dimensions.height}`
+                    : "3 / 1",
+                }}
+              >
+                <SanityImage
+                  image={data.heroLogo as any}
+                  fill
+                  className="object-contain object-left"
+                  priority
+                />
+              </div>
+            </ContentReveal>
+          ) : (
+            <>
+              <ContentReveal 
+                delay={400} 
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: "clamp(2.8rem, 11vw, 8rem)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  lineHeight: 1,
+                  fontWeight: 700,
+                  display: "block",
+                }}
+              >
+                {firstName}
+              </ContentReveal>
+              <ContentReveal 
+                delay={600} 
+                style={{
+                  fontFamily: "var(--font-signature), cursive",
+                  fontSize: "clamp(2.8rem, 11vw, 7.5rem)",
+                  textTransform: "none",
+                  letterSpacing: "0.02em",
+                  lineHeight: 1.3,
+                  display: "block",
+                  fontWeight: 400,
+                  paddingBottom: "0.5rem",
+                }}
+              >
+                {lastName}
+              </ContentReveal>
+            </>
+          )}
         </div>
 
         {/* Tagline */}

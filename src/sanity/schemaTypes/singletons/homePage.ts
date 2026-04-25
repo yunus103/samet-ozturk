@@ -23,6 +23,22 @@ export const homePageType = defineType({
       placeholder: "PERKÜSYON ŞOV SANATÇISI",
     }),
     defineField({
+      name: "heroLogo",
+      title: "Hero Logo (Yazı/Görsel)",
+      type: "image",
+      group: "hero",
+      options: { hotspot: true },
+      description: "Samet Öztürk yazısı yerine gösterilecek yatay görsel (PNG önerilir). Kesiksiz ve tam görünür olacaktır.",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Metni",
+          type: "string",
+          initialValue: "Samet",
+        }),
+      ],
+    }),
+    defineField({
       name: "heroFirstName",
       title: "İsim (1. satır)",
       type: "string",
