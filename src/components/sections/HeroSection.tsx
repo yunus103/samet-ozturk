@@ -8,7 +8,14 @@ type HeroSectionProps = {
   data: {
     heroEyebrow?: string;
     heroLogo?: {
-      asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } };
+      asset?: {
+        _id: string;
+        url: string;
+        metadata?: {
+          lqip?: string;
+          dimensions?: { width: number; height: number };
+        };
+      };
       alt?: string;
       hotspot?: { x: number; y: number };
       crop?: { top: number; bottom: number; left: number; right: number };
@@ -20,7 +27,14 @@ type HeroSectionProps = {
     heroVerticalText?: string;
     heroVideoUrl?: string;
     heroVideoPoster?: {
-      asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } };
+      asset?: {
+        _id: string;
+        url: string;
+        metadata?: {
+          lqip?: string;
+          dimensions?: { width: number; height: number };
+        };
+      };
       alt?: string;
       hotspot?: { x: number; y: number };
       crop?: { top: number; bottom: number; left: number; right: number };
@@ -53,7 +67,15 @@ const SoundWaveBars = () => (
   </div>
 );
 
-const ContentReveal = ({ children, delay, style }: { children: React.ReactNode; delay: number, style?: React.CSSProperties }) => {
+const ContentReveal = ({
+  children,
+  delay,
+  style,
+}: {
+  children: React.ReactNode;
+  delay: number;
+  style?: React.CSSProperties;
+}) => {
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -68,8 +90,9 @@ const ContentReveal = ({ children, delay, style }: { children: React.ReactNode; 
         fontWeight: 400,
         opacity: revealed ? 1 : 0,
         transform: revealed ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1)",
-        ...style
+        transition:
+          "opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+        ...style,
       }}
     >
       {children}
@@ -87,9 +110,9 @@ export function HeroSection({ data }: HeroSectionProps) {
       if (videoRef.current.readyState >= 2) {
         setVideoReady(true);
       }
-      
+
       // Otomatik oynatmayı garantiye alalım (Tarayıcı politikaları için muted zaten var)
-      videoRef.current.play().catch(err => {
+      videoRef.current.play().catch((err) => {
         console.log("Video autoplay prevented:", err);
       });
     }
@@ -146,7 +169,14 @@ export function HeroSection({ data }: HeroSectionProps) {
 
       {/* Poster yoksa siyah zemin */}
       {!data?.heroVideoPoster?.asset && (
-        <div style={{ position: "absolute", inset: 0, zIndex: 0, backgroundColor: "#080808" }} />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            backgroundColor: "#080808",
+          }}
+        />
       )}
 
       {/* Katman 2: Video (harici MP4 — yüklendikten sonra görünür) */}
@@ -170,7 +200,7 @@ export function HeroSection({ data }: HeroSectionProps) {
             zIndex: 1,
             opacity: videoReady ? 1 : 0,
             transition: "opacity 1200ms ease",
-            transform: "scaleX(-1)",
+            // transform: "scaleX(-1)",
           }}
         />
       )}
@@ -189,7 +219,8 @@ export function HeroSection({ data }: HeroSectionProps) {
           position: "absolute",
           inset: 0,
           zIndex: 2,
-          background: "linear-gradient(to top, #080808 0%, rgba(8,8,8,0.6) 30%, transparent 60%)",
+          background:
+            "linear-gradient(to top, #080808 0%, rgba(8,8,8,0.6) 30%, transparent 60%)",
         }}
       />
 
@@ -232,9 +263,18 @@ export function HeroSection({ data }: HeroSectionProps) {
         </div>
 
         {/* İsim / Logo */}
-        <div style={{ marginBottom: "1.5rem", marginTop: "-3rem", lineHeight: 1 }}>
+        <div
+          style={{ marginBottom: "1.5rem", marginTop: "-3rem", lineHeight: 1 }}
+        >
           {data?.heroLogo?.asset ? (
-            <ContentReveal delay={400} style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start" }}>
+            <ContentReveal
+              delay={400}
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+              }}
+            >
               <div
                 style={{
                   position: "relative",
@@ -254,8 +294,8 @@ export function HeroSection({ data }: HeroSectionProps) {
             </ContentReveal>
           ) : (
             <>
-              <ContentReveal 
-                delay={400} 
+              <ContentReveal
+                delay={400}
                 style={{
                   fontFamily: "var(--font-display), serif",
                   fontSize: "clamp(2.8rem, 11vw, 8rem)",
@@ -268,8 +308,8 @@ export function HeroSection({ data }: HeroSectionProps) {
               >
                 {firstName}
               </ContentReveal>
-              <ContentReveal 
-                delay={600} 
+              <ContentReveal
+                delay={600}
                 style={{
                   fontFamily: "var(--font-signature), cursive",
                   fontSize: "clamp(2.8rem, 11vw, 7.5rem)",
@@ -328,7 +368,8 @@ export function HeroSection({ data }: HeroSectionProps) {
               border: "1px solid var(--gold-border)",
               padding: "1rem 2rem",
               backgroundColor: "transparent",
-              transition: "background-color 300ms ease, border-color 300ms ease, color 300ms ease",
+              transition:
+                "background-color 300ms ease, border-color 300ms ease, color 300ms ease",
               animation: "fadeInUp 0.6s ease 1.2s both",
             }}
             aria-label={ctaLabel}
