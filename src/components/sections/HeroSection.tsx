@@ -200,7 +200,7 @@ export function HeroSection({ data }: HeroSectionProps) {
             zIndex: 1,
             opacity: videoReady ? 1 : 0,
             transition: "opacity 1200ms ease",
-            // transform: "scaleX(-1)",
+            transform: "scaleX(-1)",
           }}
         />
       )}
