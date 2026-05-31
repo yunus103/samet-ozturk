@@ -32,6 +32,9 @@ const alexBrush = Alex_Brush({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  verification: {
+    google: "vvOSs-c7e37hWm2IqwPMmnDy2dKLz2gF6CI_CYXD9sM",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
