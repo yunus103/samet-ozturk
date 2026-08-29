@@ -1,136 +1,98 @@
-# Next.js + Sanity Kurumsal Site Boilerplate
+﻿<div align="right">
+  <img src="https://img.shields.io/badge/English_EN-2563EB?style=for-the-badge" alt="English" />
+  <a href="./README.tr.md">
+    <img src="https://img.shields.io/badge/Türkçe_TR-374151?style=for-the-badge" alt="Türkçe" />
+  </a>
+</div>
 
-Modern ajanslar için hazır, production-grade Next.js 15 + Sanity v3 boilerplate.
+# Samet Öztürk — Official Digital Platform & Showcase
 
-## Tech Stack
-
-| Teknoloji | Versiyon | Açıklama |
-|-----------|----------|----------|
-| Next.js | 15+ | App Router, TypeScript |
-| Tailwind CSS | v4 | `@plugin` tabanlı konfigürasyon |
-| shadcn/ui | v4 | `@base-ui/react` tabanlı |
-| Sanity | v3 | Headless CMS |
-| Framer Motion | latest | Animasyonlar |
-| react-icons | latest | SVG ikon kütüphanesi |
-| next-themes | latest | Dark/Light mod |
-| Nodemailer | latest | İletişim formu e-postası |
-| Zod + @t3-oss/env-nextjs | latest | Type-safe env validasyonu |
+An enterprise-grade, high-performance web platform and digital portfolio engineered for percussion and stage artist **Samet Öztürk**. Built with Next.js 16, React 19, and Sanity CMS, the platform delivers an immersive, dark-aesthetic visual experience paired with instantaneous on-demand content revalidation and rigorous technical SEO.
 
 ---
 
-## Hızlı Başlangıç
+## 🏗️ Architecture & Technology Stack
 
-```bash
-# 1. Repoyu klonla
-git clone https://github.com/kullanici/proje-adi.git
-cd proje-adi
-
-# 2. Bağımlılıkları yükle
-npm install
-
-# 3. .env.local içindeki placeholder değerleri gerçek değerlerle doldur
-# (Aşağıdaki "Zorunlu Kurulum Adımları" bölümüne bak)
-
-# 4. Geliştirme sunucusunu başlat
-npm run dev
-```
-
-Tarayıcıda:
-- Site: `http://localhost:3000`
-- Sanity Studio: `http://localhost:3000/studio`
+| Layer | Technology | Purpose & Implementation |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 16 (App Router) | Server Components (RSC), Edge-ready routing, zero-bundle overhead |
+| **Runtime & UI** | React 19 / TypeScript 5 | Strict type-safety, concurrent rendering, and native transitions |
+| **Content Platform** | Sanity CMS v3 | Headless content lake with embedded Studio at `/studio` |
+| **Styling & Tokens** | Tailwind CSS v4 | CSS variable theming, dark luxury aesthetic, typography engine |
+| **Animation & Motion** | Framer Motion & CSS Waves | Scroll-driven reveals, sound wave visualizers, magnetic buttons |
+| **Form & Email** | Nodemailer + Custom API | Secure SMTP-based inquiry pipeline with schema validation |
+| **Config & Safety** | Zod + `@t3-oss/env-nextjs` | Build-time and runtime environment variable validation |
 
 ---
 
-## Zorunlu Kurulum Adımları
+## ✨ Core Modules & Functional Features
 
-### 1. Sanity Projesi Oluştur
-
-1. [sanity.io/manage](https://sanity.io/manage) adresine git
-2. "New Project" → proje adını gir
-3. Proje ID'yi kopyala → `.env.local` içinde `NEXT_PUBLIC_SANITY_PROJECT_ID` değerini güncelle
-
-### 2. Sanity API Token Al
-
-1. Sanity Dashboard → proje → **API** sekmesi
-2. **Tokens** → **Add API Token**
-3. İsim: `Read Token`, Yetki: **Editor**
-4. Token'ı kopyala → `.env.local` içinde `SANITY_API_READ_TOKEN` değerini güncelle
-
-### 3. Sanity Webhook Kur (ISR için)
-
-1. Sanity Dashboard → proje → **API** → **Webhooks**
-2. **Add Webhook**:
-   - URL: `https://siteadi.com/api/revalidate`
-   - HTTP Method: `POST`
-   - Trigger on: **Create, Update, Delete**
-   - Header: `x-webhook-secret` = `.env.local`'daki `SANITY_WEBHOOK_SECRET` değeri
-3. `.env.local` içinde `SANITY_WEBHOOK_SECRET` değerini webhook'ta ayarladığın şifre ile güncelle
-
-### 4. Draft Mode Kurulumu
-
-`SANITY_PREVIEW_SECRET` değerini rastgele bir şifre ile güncelle:
-
-```bash
-# Güvenli bir şifre üretmek için (opsiyonel)
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-Draft mode'u aktifleştirmek için: `/api/draft/enable?secret=SECRET&redirect=/`
-
-### 5. Gmail SMTP Kurulumu (İletişim Formu)
-
-1. Google Hesabı → **Güvenlik** → **2 Adımlı Doğrulama** → etkinleştir
-2. **Uygulama Şifreleri** → Uygulama: Mail → Şifreyi kopyala
-3. `.env.local` içinde `SMTP_USER` ve `SMTP_PASS` değerlerini güncelle
+- **Immersive Hero Stage:** Multi-layered viewport with lazy-loaded high-bitrate video, blur-up LQIP poster fallback, live sound wave frequency animation, and magnetic interactive buttons.
+- **Dynamic Showreel & Media Gallery:** Modular video showcase supporting YouTube/Vimeo embeds and direct MP4 streams alongside a touch-optimized lightbox image gallery with keyboard navigation.
+- **Content Hub & Editorial Blog:** GROQ-powered dynamic article engine featuring Portable Text rich-text rendering with customizable media embeds and syntax styling.
+- **Direct Booking & Inquiries:** Real-time validated contact form backed by Nodemailer SMTP integration and a floating instant WhatsApp communication channel.
+- **Granular Studio Singleton Control:** Custom Sanity Studio desk structure with singletons for global site settings, navigation trees, and home page layout modules.
 
 ---
 
-## Yeni Projede Yapılacaklar Checklist
-
-- [ ] `package.json` içinde `"name"` alanını güncelle
-- [ ] `.env.local` içindeki tüm `your-*` placeholder değerlerini gerçek değerlerle değiştir
-- [ ] `src/app/layout.tsx` içindeki `"Site Adı"` metnini güncelle
-- [ ] `tailwind.config.ts` → `globals.css` üzerinden marka renklerini güncelle
-- [ ] `public/` klasörüne `favicon.ico` koy
-- [ ] Sanity Studio'yu aç (`/studio`), **Site Ayarları** ve **Navigasyon** dokümanlarını doldur
-- [ ] Vercel'e deploy et, tüm `.env.local` env değişkenlerini Vercel paneline ekle
-- [ ] Sanity Dashboard → Webhooks: `https://siteadi.com/api/revalidate` ekle
-
----
-
-## Proje Yapısı
+## ⚡ Caching, ISR & Live Preview Architecture
 
 ```
+[Sanity Studio Update] ──> [Sanity Webhook] ──> [/api/revalidate] ──> [revalidateTag / revalidatePath] ──> [Instant CDN Cache Update]
+```
+
+- **On-Demand ISR:** Webhook-triggered tag invalidation (`layout`, `home`, `blog`, `siteSettings`) via cryptographically verified signatures (`@sanity/webhook`).
+- **Live Draft Mode Preview:** Token-authenticated preview engine (`/api/draft/enable`) enabling content creators to preview drafts in real-time without publishing.
+- **Asset Optimization:** Next-generation image pipeline (`@sanity/image-url` & `next/image`) with automated WebP/AVIF transcoding and responsive `srcset` generation.
+
+---
+
+## 🔍 SEO & Web Standards
+
+- **Semantic Structured Data:** Automated JSON-LD schemas (`Organization`, `Article`, `WebSite`) embedded per page for rich Google search graph indexing.
+- **Dynamic Meta Engine:** Automated OpenGraph, Twitter Cards, canonical URLs, and Google Search Console verification headers.
+- **Automated Sitemap & Robots:** Dynamic XML sitemap generation (`/sitemap.xml`) indexing published blog posts and core routes in real time.
+
+---
+
+## 📂 Project Directory Structure
+
+```text
 src/
 ├── app/
-│   ├── (site)/           # Kullanıcıya görünen tüm sayfalar
-│   │   ├── page.tsx      # Ana sayfa
-│   │   ├── blog/         # Blog listesi + detay
-│   │   ├── hizmetler/    # Hizmet detay sayfaları
-│   │   ├── projeler/     # Proje detay sayfaları
-│   │   ├── iletisim/     # İletişim sayfası
-│   │   └── yasal/        # Yasal sayfalar
-│   ├── api/              # API route'ları
-│   │   ├── revalidate/   # ISR webhook
-│   │   ├── draft/        # Draft mode enable/disable
-│   │   └── contact/      # İletişim formu
-│   ├── studio/           # Sanity Studio (embedded)
-│   ├── layout.tsx        # Root layout
-│   ├── not-found.tsx     # 404 sayfası
-│   ├── sitemap.ts        # Dinamik sitemap
-│   └── robots.ts         # robots.txt
+│   ├── (site)/             # Public route group (Home, Blog, Detail pages)
+│   │   ├── blog/           # Editorial listing & dynamic [slug] routes
+│   │   ├── layout.tsx      # Global chrome (Navbar, SiteFooter, CustomCursor, Grain)
+│   │   └── page.tsx        # High-impact home page with force-cache & tag binding
+│   ├── api/
+│   │   ├── contact/        # Contact submission handler (Nodemailer SMTP)
+│   │   ├── draft/          # Secure draft mode preview enable/disable handlers
+│   │   └── revalidate/     # Webhook endpoint for on-demand ISR cache purging
+│   ├── studio/             # Embedded Sanity Studio CMS route (/studio)
+│   ├── layout.tsx          # Root HTML layout with Google Font variables (Cinzel, DM Sans)
+│   ├── robots.ts           # Dynamic robots.txt generation
+│   └── sitemap.ts          # Dynamic sitemap generator
 ├── components/
-│   ├── forms/            # ContactForm
-│   ├── layout/           # Header, Footer, ThemeProvider, vb.
-│   ├── seo/              # JsonLd
-│   └── ui/               # SanityImage, RichText, FadeIn, AnimateGroup + shadcn
+│   ├── forms/              # Contact and interactive form controls
+│   ├── layout/             # Navbar, Footer, Custom Cursor, Audio wave bars, Overlays
+│   ├── sections/           # Hero, About, Videos, Gallery, and Contact sections
+│   ├── seo/                # JsonLd structured data injectors
+│   └── ui/                 # SanityImage, Lightbox, MagneticButton, RichText, Shads
 ├── lib/
-│   ├── env.ts            # Type-safe env validasyonu
-│   ├── seo.ts            # buildMetadata()
-│   └── utils.ts          # cn(), formatDate()
+│   ├── env.ts              # Type-safe environment variable schema (T3 Env + Zod)
+│   ├── seo.ts              # Metadata generation builder utility
+│   └── utils.ts            # Class merge (clsx + tailwind-merge) and date formatters
 └── sanity/
-    ├── lib/              # client.ts, image.ts, queries.ts
-    ├── plugins/          # singletonPlugin
-    ├── schemaTypes/      # Tüm Sanity şemaları
-    └── structure.ts      # Studio sol panel yapısı
+    ├── lib/                # Sanity client, image builder, and GROQ queries
+    ├── plugins/            # Desk singleton locking plugins
+    ├── schemaTypes/        # Schemas (Singletons: Home, Settings; Documents: Blog)
+    └── structure.ts        # Custom CMS Studio sidebar taxonomy
 ```
+
+---
+
+## 🛡️ Security & Engineering Standards
+
+- **Type-Safe Environments:** Zero runtime config failures via compile-time validated environment variables.
+- **Webhook Security:** HMAC SHA-256 signature verification preventing spoofed cache purging.
+- **Content Security & Resiliency:** Isolated preview clients, sanitized input payloads, and graceful error boundary handling across all views.
