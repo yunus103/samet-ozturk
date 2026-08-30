@@ -136,6 +136,17 @@ export function Footer({ settings, navigation }: { settings: any; navigation: an
           <p className="text-xs text-muted-foreground">
             © {currentYear} {settings?.siteName}. Tüm hakları saklıdır.
           </p>
+          <p className="text-xs text-muted-foreground">
+            Tasarım ve Geliştirme:{" "}
+            <a
+              href="https://yaytechstudio.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-primary transition-colors font-medium"
+            >
+              Yaytech Studio
+            </a>
+          </p>
           <div className="flex gap-4">
             <Link href="/yasal/gizlilik-politikasi" className="text-xs text-muted-foreground hover:text-primary transition-colors">
               Gizlilik Politikası

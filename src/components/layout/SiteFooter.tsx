@@ -156,6 +156,29 @@ export function SiteFooter({ settings, pageData }: FooterProps) {
         >
           © {currentYear} {settings?.siteName || "Samet Öztürk"}. Tüm hakları saklıdır.
         </p>
+        <p
+          style={{
+            fontSize: "11px",
+            color: "var(--text-hint)",
+            letterSpacing: "0.05em",
+          }}
+        >
+          Tasarım ve Geliştirme:{" "}
+          <a
+            href="https://yaytechstudio.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "var(--text-muted)",
+              textDecoration: "none",
+              transition: "color 200ms ease",
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
+          >
+            Yaytech Studio
+          </a>
+        </p>
         <nav style={{ display: "flex", gap: "1.5rem" }}>
           {[
             { label: "Hakkında", href: "#hakkinda" },
